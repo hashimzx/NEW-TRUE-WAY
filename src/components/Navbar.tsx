@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import { AnimatedLogo } from './AnimatedLogo';
+import { getAutoLocation, computePrayerTimes, getNextPrayer, formatLiveClock } from '../utils/prayerTimes';
 import { 
   BookOpen, 
   GraduationCap, 
@@ -15,7 +16,10 @@ import {
   Phone,
   Video,
   MessageCircle,
-  HelpCircle
+  HelpCircle,
+  Clock,
+  BookMarked,
+  UserCheck
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -45,6 +49,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
+  const [liveClock, setLiveClock] = useState(() => formatLiveClock(new Date()));
+  const [autoLoc] = useState(() => getAutoLocation());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLiveClock(formatLiveClock(new Date()));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const prayerTimes = computePrayerTimes(new Date(), autoLoc.lat, autoLoc.lng, true);
+  const nextPrayer = getNextPrayer(prayerTimes, new Date());
 
   const currencies: Array<'USD' | 'GBP' | 'EUR' | 'CAD' | 'AUD'> = ['USD', 'GBP', 'EUR', 'CAD', 'AUD'];
 
@@ -63,7 +79,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'mentor', label: 'Meet Mentor', icon: GraduationCap, badge: 'Lead' },
     { id: 'quran', label: 'Full Quran', icon: BookOpen, badge: '114 Surahs' },
     { id: 'qaida', label: 'Madani Qaida', icon: Mic, badge: 'AI Voice' },
-    { id: 'faqs', label: 'FAQs', icon: HelpCircle },
+    { id: 'namaz', label: 'Namaz Times', icon: Clock, badge: 'Auto' },
+    { id: 'duas', label: 'Daily Duas', icon: BookMarked, badge: 'Sunnah' },
+    { id: 'attendance', label: 'Attendance', icon: UserCheck, badge: 'Live' },
     { id: 'contact', label: 'Contact', icon: Phone }
   ];
 
@@ -93,7 +111,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            {/* Automatic Namaz & Local Time Widget */}
+            <button
+              onClick={() => {
+                setCurrentView('namaz');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-[11px] font-bold text-white transition cursor-pointer"
+              title={`Auto-detected: ${autoLoc.city}, ${autoLoc.country}. Click to view full Namaz schedule.`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <Clock className="w-3 h-3 text-pink-300" />
+              <span className="font-mono">{liveClock}</span>
+              <span className="text-purple-300">·</span>
+              <span className="text-amber-300 font-bold">{nextPrayer.name} in {nextPrayer.remainingFormatted}</span>
+            </button>
+
             {/* Currency Selector */}
             <div className="relative">
               <button

@@ -100,6 +100,21 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenEnroll }) => {
                 </button>
               </li>
               <li>
+                <button onClick={() => onNavigate('namaz')} className="hover:text-white transition cursor-pointer text-pink-300 font-semibold">
+                  Namaz Times (Live Auto)
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('duas')} className="hover:text-white transition cursor-pointer text-pink-300 font-semibold">
+                  Daily Masnoon Duas
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('attendance')} className="hover:text-white transition cursor-pointer text-emerald-300 font-semibold">
+                  Class Attendance Tracker
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onNavigate('faqs')} className="hover:text-white transition cursor-pointer">
                   FAQs & Questions
                 </button>

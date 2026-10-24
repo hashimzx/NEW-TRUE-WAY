@@ -24,6 +24,9 @@ import { AdminPanel } from './components/AdminPanel';
 import { CheckoutModal } from './components/CheckoutModal';
 import { AuthModal } from './components/AuthModal';
 import { EnrollModal } from './components/EnrollModal';
+import { NamazSection } from './components/NamazSection';
+import { DuasSection } from './components/DuasSection';
+import { AttendanceTracker } from './components/AttendanceTracker';
 import { Footer } from './components/Footer';
 import { MessageCircle } from 'lucide-react';
 
@@ -299,6 +302,39 @@ export default function App() {
           </div>
         )}
 
+        {currentView === 'namaz' && (
+          <NamazSection
+            onOpenDuas={() => {
+              setCurrentView('duas');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {currentView === 'duas' && (
+          <DuasSection
+            onOpenQuran={() => {
+              setCurrentView('quran');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenQaida={() => {
+              setCurrentView('qaida');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {currentView === 'attendance' && (
+          <AttendanceTracker
+            currentUser={currentUser}
+            onOpenSchedule={() => handleOpenTrial()}
+            onNavigateToCourse={() => {
+              setCurrentView('courses');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
         {currentView === 'faqs' && (
           <div className="py-8">
             <FaqSection
@@ -316,6 +352,10 @@ export default function App() {
             user={currentUser}
             onNavigateToQaida={() => setCurrentView('qaida')}
             onOpenSchedule={() => handleOpenTrial()}
+            onNavigateToAttendance={() => {
+              setCurrentView('attendance');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             attemptsHistory={pronunciationAttempts}
           />
         )}

@@ -17,7 +17,8 @@ import {
   FileText, 
   RotateCcw,
   Globe,
-  Download
+  Download,
+  UserCheck
 } from 'lucide-react';
 
 interface StudentDashboardProps {
@@ -25,13 +26,15 @@ interface StudentDashboardProps {
   onNavigateToQaida: (lessonId?: string) => void;
   onOpenSchedule: () => void;
   attemptsHistory: PronunciationAttempt[];
+  onNavigateToAttendance?: () => void;
 }
 
 export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   user,
   onNavigateToQaida,
   onOpenSchedule,
-  attemptsHistory
+  attemptsHistory,
+  onNavigateToAttendance
 }) => {
   const [showCertificate, setShowCertificate] = useState(false);
 
@@ -47,10 +50,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
       {/* Student Greeting & Profile Banner */}
-      <div className="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-r from-[#2e0854] via-[#3b0764] to-[#4a044e] border border-purple-700/60 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600 to-black border-2 border-red-500/40 flex items-center justify-center text-white font-black text-2xl shadow-xl">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-800 border-2 border-pink-400/40 flex items-center justify-center text-white font-black text-2xl shadow-xl">
               {user.name.charAt(0)}
             </div>
 
@@ -59,31 +62,41 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
                   As-salamu alaykum, {user.name}
                 </h1>
-                <span className="text-[10px] bg-red-600/20 text-red-400 border border-red-600/30 px-2 py-0.5 rounded-full font-bold uppercase">
+                <span className="text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/40 px-2 py-0.5 rounded-full font-bold uppercase">
                   {user.role}
                 </span>
               </div>
-              <p className="text-xs text-zinc-400 flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5 text-red-500" />
+              <p className="text-xs text-purple-200 flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5 text-pink-400" />
                 <span>{user.country} · Timezone: {user.timezone}</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            {onNavigateToAttendance && (
+              <button
+                onClick={onNavigateToAttendance}
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md cursor-pointer"
+              >
+                <UserCheck className="w-4 h-4 text-emerald-200" />
+                <span>Attendance Log (96%)</span>
+              </button>
+            )}
+
             <button
               onClick={() => onNavigateToQaida()}
-              className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg glow-red-sm"
+              className="px-4 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Resume Madani Qaida</span>
+              <span>Resume Qaida</span>
             </button>
 
             <button
               onClick={onOpenSchedule}
-              className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 rounded-xl text-xs font-bold transition flex items-center gap-2"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-purple-100 border border-white/20 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer"
             >
-              <Calendar className="w-4 h-4 text-red-500" />
+              <Calendar className="w-4 h-4 text-pink-300" />
               <span>Book 1-on-1 Class</span>
             </button>
           </div>

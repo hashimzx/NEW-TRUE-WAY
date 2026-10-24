@@ -93,13 +93,29 @@ export interface PrayerTimeData {
 
 export interface IslamicDua {
   id: string;
-  category: 'daily' | 'morning_evening' | 'prayer' | 'forgiveness' | 'protection';
+  category: 'daily' | 'morning_evening' | 'prayer' | 'forgiveness' | 'protection' | 'quran_study' | 'parents' | 'hardship';
   title: string;
   arabic: string;
   transliteration: string;
   englishTranslation: string;
   reference: string;
   virtue?: string;
+  audioClip?: string;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  userId: string;
+  userName: string;
+  courseId: string;
+  courseTitle: string;
+  date: string; // YYYY-MM-DD
+  time: string; // e.g. 05:30 PM
+  status: 'present' | 'absent' | 'late' | 'excused';
+  sessionTopic: string;
+  instructorName: string;
+  durationMinutes: number;
+  notes?: string;
 }
 
 export interface LiveBooking {
