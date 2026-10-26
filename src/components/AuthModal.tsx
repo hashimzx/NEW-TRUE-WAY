@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, UserRole } from '../types';
+import { User } from '../types';
 import { 
   User as UserIcon, 
   Lock, 
@@ -9,19 +9,24 @@ import {
   CheckCircle, 
   ShieldCheck, 
   ArrowRight,
-  Sparkles
+  Sparkles,
+  UserCheck,
+  Flame,
+  Award
 } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLogin: (user: User) => void;
+  onNavigateToAttendance?: () => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
-  onLogin
+  onLogin,
+  onNavigateToAttendance
 }) => {
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [email, setEmail] = useState('');
@@ -42,8 +47,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     const newUser: User = {
       id: `usr-${Date.now()}`,
-      name: mode === 'register' ? name : (email.includes('admin') ? 'TWG Director' : 'Hashim Zafar'),
-      email: email || 'student@truewaygrowth.com',
+      name: mode === 'register' ? (name || 'New Student') : (email.includes('admin') ? 'TWQ Director' : 'Hashim Zafar'),
+      email: email || (mode === 'register' ? 'student@truewayquran.com' : 'hashimzafar2k@gmail.com'),
       role: email.toLowerCase().includes('admin') ? 'admin' : 'student',
       country: country,
       timezone: 'Europe/London (GMT)',
@@ -53,7 +58,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         masteredWordIds: ['w-1', 'w-2', 'w-3', 'w-4', 'w-201', 'w-202'],
         averagePronunciationScore: 88,
         practiceMinutes: 145,
-        streakDays: 5,
+        streakDays: 7,
         lastPracticeDate: new Date().toISOString()
       },
       bookmarks: ['w-6', 'w-15']
@@ -89,8 +94,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const loginAsDemoAdmin = () => {
     const adminUser: User = {
       id: 'demo-admin-1',
-      name: 'TWG Academy Admin',
-      email: 'admin@truewaygrowth.com',
+      name: 'TWQ Academy Admin',
+      email: 'admin@truewayquran.com',
       role: 'admin',
       country: 'International Academy',
       timezone: 'Asia/Dubai (GST)',
@@ -110,66 +115,108 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden my-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-md bg-white border-2 border-[#6B1B7E]/20 rounded-3xl shadow-2xl overflow-hidden my-6 animate-in fade-in zoom-in-95 duration-200">
         
-        {/* Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-900/50">
+        {/* Top Header in Brand Gradient */}
+        <div className="bg-gradient-to-r from-[#6B1B7E] via-[#5B2A9A] to-[#E0107F] text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-red-600/20 text-red-500 rounded-lg">
-              <UserIcon className="w-4 h-4" />
+            <span className="p-1.5 bg-white/20 rounded-xl">
+              <UserIcon className="w-4 h-4 text-white" />
             </span>
-            <span className="text-sm font-bold text-white">
-              {mode === 'login' && 'Student & Tutor Login'}
-              {mode === 'register' && 'Create Student Account'}
-              {mode === 'forgot' && 'Reset Password'}
+            <span className="text-sm font-black tracking-wide">
+              {mode === 'login' && 'Student Portal Sign In'}
+              {mode === 'register' && 'New Student Registration'}
+              {mode === 'forgot' && 'Reset Account Password'}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800 transition"
+            className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
+        {/* Tab Switcher: Login vs Sign Up */}
+        <div className="flex border-b border-purple-100 bg-purple-50/50 p-1">
+          <button
+            type="button"
+            onClick={() => setMode('login')}
+            className={`flex-1 py-2 text-xs font-black rounded-xl transition cursor-pointer ${
+              mode === 'login'
+                ? 'bg-white text-[#6B1B7E] shadow-xs'
+                : 'text-slate-600 hover:text-[#6B1B7E]'
+            }`}
+          >
+            Student Login
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('register')}
+            className={`flex-1 py-2 text-xs font-black rounded-xl transition cursor-pointer ${
+              mode === 'register'
+                ? 'bg-white text-[#6B1B7E] shadow-xs'
+                : 'text-slate-600 hover:text-[#6B1B7E]'
+            }`}
+          >
+            Create Account (Sign Up)
+          </button>
+        </div>
+
+        {/* Student Attendance Callout Banner */}
+        <div className="mx-6 mt-4 p-3 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-[#6B1B7E]/15 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+            <UserCheck className="w-5 h-5 text-emerald-600" />
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-xs font-bold text-slate-900">
+              Daily Class Attendance Enabled
+            </p>
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Log in daily to mark your class presence, track study streaks, and unlock certified credits.
+            </p>
+          </div>
+        </div>
+
         {/* Form Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-5">
           
-          {/* Quick Demo Switchers for easy test access */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3 space-y-2">
-            <div className="flex items-center justify-between text-[11px] text-zinc-400">
-              <span className="font-semibold text-zinc-300">Quick Demo Accounts:</span>
-              <span>1-Click Sign In</span>
+          {/* Quick Demo Buttons for immediate verification */}
+          <div className="bg-purple-50/70 border border-[#6B1B7E]/15 rounded-2xl p-3 space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-slate-500 font-bold">
+              <span>Quick One-Click Demo Access:</span>
+              <span className="text-[#E0107F]">Instant Entry</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={loginAsDemoStudent}
-                className="py-2 px-2.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-xs font-bold border border-zinc-700 transition flex items-center justify-center gap-1.5"
+                className="py-2 px-2.5 bg-white hover:bg-purple-100 text-[#6B1B7E] rounded-xl text-xs font-black border border-purple-200 transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
               >
-                <UserIcon className="w-3.5 h-3.5 text-red-500" />
-                <span>Student Portal</span>
+                <UserIcon className="w-3.5 h-3.5 text-[#E0107F]" />
+                <span>Demo Student</span>
               </button>
 
               <button
                 type="button"
                 onClick={loginAsDemoAdmin}
-                className="py-2 px-2.5 bg-zinc-800 hover:bg-zinc-700 text-red-400 hover:text-white rounded-xl text-xs font-bold border border-zinc-700 transition flex items-center justify-center gap-1.5"
+                className="py-2 px-2.5 bg-white hover:bg-purple-100 text-[#5B2A9A] rounded-xl text-xs font-black border border-purple-200 transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-red-500" />
-                <span>Admin Portal</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-[#6B1B7E]" />
+                <span>Demo Admin</span>
               </button>
             </div>
           </div>
 
           {forgotSuccess ? (
             <div className="text-center py-6 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-300 flex items-center justify-center mx-auto">
                 <CheckCircle className="w-6 h-6" />
               </div>
-              <h4 className="text-base font-bold text-white">Reset Link Dispatched</h4>
-              <p className="text-xs text-zinc-400">
+              <h4 className="text-base font-bold text-slate-900">Reset Link Sent</h4>
+              <p className="text-xs text-slate-600">
                 A password reset authorization link has been forwarded to <strong>{email}</strong>.
               </p>
               <button
@@ -178,42 +225,45 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setForgotSuccess(false);
                   setMode('login');
                 }}
-                className="mt-2 text-xs font-bold text-red-500 hover:underline"
+                className="text-xs font-bold text-[#6B1B7E] hover:underline"
               >
-                Back to Sign In
+                Return to Login
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'register' && (
                 <div>
-                  <label className="text-xs font-semibold text-zinc-400 block mb-1">
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
                     Student Full Name
                   </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Hashim Zafar"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
-                  />
+                  <div className="relative">
+                    <UserIcon className="w-4 h-4 text-[#6B1B7E] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Hashim Zafar"
+                      className="w-full pl-9 pr-3 py-2.5 bg-purple-50/50 border border-purple-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B1B7E]"
+                    />
+                  </div>
                 </div>
               )}
 
               <div>
-                <label className="text-xs font-semibold text-zinc-400 block mb-1">
+                <label className="text-xs font-bold text-slate-700 block mb-1">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-[#6B1B7E] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="student@example.com"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                    className="w-full pl-9 pr-3 py-2.5 bg-purple-50/50 border border-purple-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B1B7E]"
                   />
                 </div>
               </div>
@@ -221,26 +271,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {mode !== 'forgot' && (
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-zinc-400">Password</label>
+                    <label className="text-xs font-bold text-slate-700">Password</label>
                     {mode === 'login' && (
                       <button
                         type="button"
                         onClick={() => setMode('forgot')}
-                        className="text-[11px] text-zinc-500 hover:text-red-400 transition"
+                        className="text-[11px] font-bold text-[#E0107F] hover:underline"
                       >
                         Forgot?
                       </button>
                     )}
                   </div>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="w-4 h-4 text-[#6B1B7E] absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="password"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                      className="w-full pl-9 pr-3 py-2.5 bg-purple-50/50 border border-purple-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B1B7E]"
                     />
                   </div>
                 </div>
@@ -248,82 +298,71 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               {mode === 'register' && (
                 <div>
-                  <label className="text-xs font-semibold text-zinc-400 block mb-1">
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
                     Country of Residence
                   </label>
-                  <select
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
-                  >
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="United States">United States</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="United Arab Emirates">United Arab Emirates</option>
-                    <option value="Germany">Germany</option>
-                    <option value="France">France</option>
-                    <option value="Saudi Arabia">Saudi Arabia</option>
-                  </select>
+                  <div className="relative">
+                    <Globe className="w-4 h-4 text-[#6B1B7E] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <select
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2.5 bg-purple-50/50 border border-purple-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#6B1B7E]"
+                    >
+                      <option value="United Kingdom">United Kingdom (GMT)</option>
+                      <option value="United States">United States (EST/PST)</option>
+                      <option value="Canada">Canada (EST/CST)</option>
+                      <option value="Australia">Australia (AEST)</option>
+                      <option value="United Arab Emirates">United Arab Emirates (GST)</option>
+                      <option value="Saudi Arabia">Saudi Arabia (AST)</option>
+                      <option value="Pakistan">Pakistan (PKT)</option>
+                    </select>
+                  </div>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg glow-red-sm"
+                className="w-full py-3 bg-gradient-to-r from-[#6B1B7E] via-[#5B2A9A] to-[#E0107F] hover:opacity-95 text-white font-black text-xs rounded-xl transition shadow-md shadow-[#E0107F]/20 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>
-                  {mode === 'login' && 'Sign In to My Dashboard'}
-                  {mode === 'register' && 'Register Student Account'}
-                  {mode === 'forgot' && 'Send Reset Email'}
+                  {mode === 'login' && 'Sign In to Student Portal'}
+                  {mode === 'register' && 'Register & Activate Daily Attendance'}
+                  {mode === 'forgot' && 'Send Password Recovery'}
                 </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           )}
 
-          {/* Toggle between Login and Register */}
-          <div className="pt-2 border-t border-zinc-850 text-center text-xs text-zinc-400">
-            {mode === 'login' && (
+          {/* Bottom Switcher */}
+          <div className="pt-2 text-center text-xs text-slate-500">
+            {mode === 'login' ? (
               <p>
-                Don't have an account yet?{' '}
+                Don't have an academy account?{' '}
                 <button
                   type="button"
                   onClick={() => setMode('register')}
-                  className="font-bold text-red-500 hover:underline"
+                  className="font-black text-[#6B1B7E] hover:underline"
                 >
-                  Create Student Account
+                  Create one now
                 </button>
               </p>
-            )}
-
-            {mode === 'register' && (
+            ) : (
               <p>
-                Already have an account?{' '}
+                Already registered with True Way Quran?{' '}
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className="font-bold text-red-500 hover:underline"
+                  className="font-black text-[#6B1B7E] hover:underline"
                 >
-                  Sign In
-                </button>
-              </p>
-            )}
-
-            {mode === 'forgot' && (
-              <p>
-                Remember your password?{' '}
-                <button
-                  type="button"
-                  onClick={() => setMode('login')}
-                  className="font-bold text-red-500 hover:underline"
-                >
-                  Back to Sign In
+                  Sign in here
                 </button>
               </p>
             )}
           </div>
+
         </div>
+
       </div>
     </div>
   );

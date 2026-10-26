@@ -9,10 +9,14 @@ interface AnimatedLogoProps {
 
 /**
  * AnimatedLogo - True Way Quran
- * Pure vector in-code SVG implementation accurately matching the official brand identity.
- * Features Square Kufic Arabic calligraphy ("القرآن الكريم"), royal purple "TRUE WAY" badge,
- * purple-bordered "QURAN" badge, and "WWW.TRUEWAYQURAN.COM" baseline, enhanced with
- * futuristic holographic sheen, subtle aurora glow, and responsive scaling.
+ * Implemented strictly according to official brand JSON specifications:
+ * - Palette: primary_purple: #6B1B7E, violet: #5B2A9A, magenta: #E0107F, white: #FFFFFF, silver: #C8C8C8
+ * - Elements:
+ *    1. Arabic Calligraphy ("القرآن الكريم"): Square Kufic with linear-gradient top-to-bottom #5B2A9A to #E0107F
+ *    2. TRUE WAY Box: rectangle #6B1B7E with gradient text #FFFFFF to #C8C8C8
+ *    3. QURAN Box: white rectangle with thick #6B1B7E border and wide tracking #6B1B7E text
+ *    4. WWW.TRUEWAYQURAN.COM: very-wide tracked #6B1B7E text
+ * - Animations: Smooth holographic sheen sweep, gentle calligraphy shimmer, and ambient aura glow
  */
 export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   size = 'md',
@@ -24,10 +28,10 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
 
   // Height configurations mapping cleanly across layouts
   const heightClasses = {
-    sm: 'h-10 sm:h-11',
-    md: 'h-13 sm:h-14 md:h-15',
-    lg: 'h-16 sm:h-18 md:h-20',
-    xl: 'h-22 sm:h-26 md:h-28'
+    sm: 'h-11 sm:h-12 md:h-13',
+    md: 'h-14 sm:h-15 md:h-17',
+    lg: 'h-20 sm:h-22 md:h-24',
+    xl: 'h-26 sm:h-28 md:h-32'
   }[size];
 
   return (
@@ -37,66 +41,75 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       onMouseLeave={() => setIsHovered(false)}
       title="True Way Quran - Online Quran Academy"
     >
-      {/* Outer Chassis with Futuristic Aurora Glow */}
+      {/* Outer Chassis with Brand Aura Glow */}
       <div
         className={`relative flex items-center justify-center rounded-xl transition-all duration-300 transform group-hover:scale-[1.02] ${
           lightBg
-            ? 'bg-white p-1.5 shadow-sm border border-purple-100/80 hover:border-pink-300 hover:shadow-md'
-            : 'bg-white p-2 shadow-lg border border-purple-200 hover:border-pink-300 hover:shadow-xl'
+            ? 'bg-white p-1.5 shadow-sm border border-purple-100/90 hover:border-[#E0107F]/40 hover:shadow-md'
+            : 'bg-white p-2 shadow-lg border border-purple-200 hover:border-[#E0107F]/50 hover:shadow-xl'
         }`}
       >
-        {/* Futuristic Ambient Neon Aurora Glow on hover */}
+        {/* Ambient Neon Aurora Glow on hover matching brand palette */}
         <div
-          className={`absolute -inset-1 rounded-xl transition-opacity duration-500 pointer-events-none blur-lg bg-gradient-to-r from-purple-700 via-fuchsia-600 to-pink-500 ${
-            isHovered ? 'opacity-35' : 'opacity-0'
+          className={`absolute -inset-1 rounded-xl transition-opacity duration-500 pointer-events-none blur-lg bg-gradient-to-r from-[#6B1B7E] via-[#5B2A9A] to-[#E0107F] ${
+            isHovered ? 'opacity-40' : 'opacity-0'
           }`}
         />
 
-        {/* Pure Vector In-Code Logo (SVG & CSS Animations, Zero External Image Files) */}
+        {/* Pure Vector In-Code Logo (SVG & CSS Animations) */}
         <div className="relative overflow-hidden rounded-lg flex items-center">
           <svg
             viewBox="0 0 440 172"
             className={`${heightClasses} w-auto object-contain transition-all duration-300`}
-            style={{ filter: isHovered ? 'drop-shadow(0 0 8px rgba(228, 0, 123, 0.25))' : 'none' }}
+            style={{ filter: isHovered ? 'drop-shadow(0 0 8px rgba(224, 16, 127, 0.3))' : 'none' }}
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              {/* Authentic True Way Arabic Calligraphy Gradient: Royal Purple to Vivid Magenta */}
+              {/* 1. Official Arabic Calligraphy Gradient: #5B2A9A (Violet) to #E0107F (Magenta) */}
               <linearGradient id="twqArabicGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#581470" />
-                <stop offset="30%" stopColor="#6e1986" />
-                <stop offset="70%" stopColor="#b50e7b" />
-                <stop offset="100%" stopColor="#e3007b" />
+                <stop offset="0%" stopColor="#5B2A9A" />
+                <stop offset="50%" stopColor="#6B1B7E" />
+                <stop offset="100%" stopColor="#E0107F" />
               </linearGradient>
 
-              {/* Dynamic Futuristic Holographic Sheen Sweep for TRUE WAY plate */}
+              {/* 2. TRUE WAY Text Gradient: #FFFFFF to #C8C8C8 (Silver) */}
+              <linearGradient id="twqTrueWayTextGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="100%" stopColor="#C8C8C8" />
+              </linearGradient>
+
+              {/* 3. Dynamic Animated Sheen Sweep Gradient */}
               <linearGradient id="twqSheenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-                <stop offset="45%" stopColor="#ffffff" stopOpacity="0.4" />
-                <stop offset="55%" stopColor="#ffffff" stopOpacity="0.4" />
+                <stop offset="45%" stopColor="#ffffff" stopOpacity="0.45" />
+                <stop offset="55%" stopColor="#ffffff" stopOpacity="0.45" />
                 <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
               </linearGradient>
 
-              {/* Laser Beam Gradient for URL underline */}
+              {/* 4. Underline Laser Gradient */}
               <linearGradient id="twqLaserUnderline" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#581470" stopOpacity="0.1" />
-                <stop offset="50%" stopColor="#e3007b" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#581470" stopOpacity="0.1" />
+                <stop offset="0%" stopColor="#6B1B7E" stopOpacity="0.1" />
+                <stop offset="50%" stopColor="#E0107F" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#6B1B7E" stopOpacity="0.1" />
               </linearGradient>
 
               {/* Clip path for TRUE WAY sheen sweep */}
               <clipPath id="trueWayClip">
                 <rect x="154" y="4" width="282" height="70" rx="0" />
               </clipPath>
+
+              {/* Clip path for Arabic calligraphy sheen sweep */}
+              <clipPath id="arabicCalligraphyClip">
+                <rect x="2" y="2" width="144" height="144" rx="0" />
+              </clipPath>
             </defs>
 
             {/* ====================================================================== */}
-            {/* 1. LEFT SECTION: AUTHENTIC SQUARE KUFIC CALLIGRAPHY ("القرآن الكريم")   */}
+            {/* 1. LEFT SECTION: SQUARE KUFIC CALLIGRAPHY ("القرآن الكريم")              */}
             {/* ====================================================================== */}
-            <g id="kuficCalligraphySection">
+            <g id="arabic_calligraphy" clipPath="url(#arabicCalligraphyClip)">
               <g
-                id="arabicCalligraphy"
                 transform="translate(4, 4) scale(0.9726, 0.9729)"
                 className="transition-transform duration-300"
               >
@@ -106,24 +119,34 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
                   fillRule="evenodd"
                 />
               </g>
+
+              {/* Shimmer sweep effect across Arabic calligraphy */}
+              <rect
+                x="0"
+                y="0"
+                width="80"
+                height="150"
+                fill="url(#twqSheenGrad)"
+                className="animate-holo-sheen pointer-events-none opacity-40"
+              />
             </g>
 
             {/* ====================================================================== */}
             {/* 2. RIGHT SECTION: TWO RECTANGULAR BADGES (TRUE WAY / QURAN)            */}
             {/* ====================================================================== */}
             <g id="brandBadgesSection">
-              {/* --- TOP BADGE: SOLID ROYAL PURPLE WITH WHITE "TRUE WAY" --- */}
-              <g id="trueWayBadge">
-                {/* Solid Purple Plate matching authentic brand */}
+              {/* --- TOP BADGE: SOLID PRIMARY PURPLE (#6B1B7E) WITH GRADIENT "TRUE WAY" --- */}
+              <g id="true_way_box">
+                {/* Background #6B1B7E matching exact JSON */}
                 <rect
                   x="154"
                   y="4"
                   width="282"
                   height="70"
-                  fill="#5b1573"
+                  fill="#6B1B7E"
                 />
 
-                {/* Futuristic Holographic Sheen Sweep (CSS Animated) */}
+                {/* Animated Holographic Sheen Sweep (CSS Animated) */}
                 <g clipPath="url(#trueWayClip)">
                   <rect
                     x="120"
@@ -135,12 +158,12 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
                   />
                 </g>
 
-                {/* Bold Sans-Serif Typography: TRUE WAY */}
+                {/* Bold Sans-Serif Typography: TRUE WAY with #FFFFFF to #C8C8C8 fill */}
                 <text
                   x="295"
                   y="52"
                   textAnchor="middle"
-                  fill="#ffffff"
+                  fill="url(#twqTrueWayTextGrad)"
                   fontFamily="'Plus Jakarta Sans', Montserrat, system-ui, -apple-system, sans-serif"
                   fontWeight="900"
                   fontSize="34"
@@ -150,25 +173,25 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
                 </text>
               </g>
 
-              {/* --- BOTTOM BADGE: SOLID WHITE WITH PURPLE BORDER & PURPLE "QURAN" --- */}
-              <g id="quranBadge">
-                {/* White Enclosure with Thick Solid Purple Border */}
+              {/* --- MIDDLE BADGE: WHITE (#FFFFFF) WITH THICK #6B1B7E BORDER & "QURAN" --- */}
+              <g id="quran_box">
+                {/* White Enclosure with Thick Solid Purple Border #6B1B7E */}
                 <rect
                   x="154"
                   y="74"
                   width="282"
                   height="74"
-                  fill="#ffffff"
-                  stroke="#5b1573"
+                  fill="#FFFFFF"
+                  stroke="#6B1B7E"
                   strokeWidth="5"
                 />
 
-                {/* Bold Sans-Serif Typography: QURAN (Wide Tracking) */}
+                {/* Bold Sans-Serif Typography: QURAN in #6B1B7E (Wide Tracking) */}
                 <text
                   x="295"
                   y="126"
                   textAnchor="middle"
-                  fill="#5b1573"
+                  fill="#6B1B7E"
                   fontFamily="'Plus Jakarta Sans', Montserrat, system-ui, -apple-system, sans-serif"
                   fontWeight="900"
                   fontSize="36"
@@ -180,15 +203,15 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
             </g>
 
             {/* ====================================================================== */}
-            {/* 3. BOTTOM LINE: WWW.TRUEWAYQURAN.COM                                   */}
+            {/* 3. BOTTOM-RIGHT SECTION: WWW.TRUEWAYQURAN.COM                           */}
             {/* ====================================================================== */}
             {showUrl && (
-              <g id="urlSection">
+              <g id="website_url">
                 <text
                   x="220"
                   y="166"
                   textAnchor="middle"
-                  fill="#5b1573"
+                  fill="#6B1B7E"
                   fontFamily="'Plus Jakarta Sans', Montserrat, system-ui, -apple-system, sans-serif"
                   fontWeight="900"
                   fontSize="11.5"
@@ -197,7 +220,7 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
                   W W W . T R U E W A Y Q U R A N . C O M
                 </text>
 
-                {/* Subtle Futuristic Laser Underline on Hover */}
+                {/* Subtle Laser Underline on Hover */}
                 {isHovered && (
                   <line
                     x1="10"

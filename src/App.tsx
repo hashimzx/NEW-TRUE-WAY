@@ -27,6 +27,10 @@ import { EnrollModal } from './components/EnrollModal';
 import { NamazSection } from './components/NamazSection';
 import { DuasSection } from './components/DuasSection';
 import { AttendanceTracker } from './components/AttendanceTracker';
+import { QuranHistoryCarousel } from './components/QuranHistoryCarousel';
+import { AudioResumeBar } from './components/AudioResumeBar';
+import { PrayerTimeSidebar } from './components/PrayerTimeSidebar';
+import { WorshipGuideSection } from './components/WorshipGuideSection';
 import { Footer } from './components/Footer';
 import { MessageCircle } from 'lucide-react';
 
@@ -35,6 +39,7 @@ export default function App() {
   const [currency, setCurrency] = useState<'USD' | 'GBP' | 'EUR' | 'CAD' | 'AUD'>('GBP');
   const [timezone, setTimezone] = useState<string>('Europe/London');
   const [selectedTrackForTrial, setSelectedTrackForTrial] = useState<'kids' | 'adults' | 'female' | null>(null);
+  const [audioResumeSession, setAudioResumeSession] = useState<{ surahNumber: number; seekTime: number } | null>(null);
 
   // Lessons state with custom teacher recordings capability
   const [lessons, setLessons] = useState<QaidaLesson[]>(() => {
@@ -198,8 +203,17 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleResumeAudio = (session: { surahNumber: number; currentTime: number }) => {
+    setAudioResumeSession({
+      surahNumber: session.surahNumber,
+      seekTime: session.currentTime
+    });
+    setCurrentView('quran');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen bg-[#faf8ff] text-slate-900 font-sans flex flex-col selection:bg-purple-600 selection:text-white">
+    <div className="min-h-screen bg-[#faf8ff] text-slate-900 font-sans flex flex-col selection:bg-[#6B1B7E] selection:text-white">
       
       {/* Navigation */}
       <Navbar
@@ -231,21 +245,32 @@ export default function App() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               onOpenEnroll={() => setIsEnrollOpen(true)}
-              onMeetMentor={() => {
-                const el = document.getElementById('mentor');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-            />
-
-            {/* Meet Your Mentor Section (Direct from ustadleads.com) */}
-            <MentorSection
-              onEnroll={() => setIsEnrollOpen(true)}
             />
 
             {/* Specialized Classes for Kids, Sisters & Adults */}
             <SpecializedClasses
               onBookTrial={(cat) => handleOpenTrial(cat)}
               onExploreQaida={() => setCurrentView('qaida')}
+            />
+
+            {/* True Way of Namaz, Eid, Janazah & Roza (Do This & Avoid This) Guide */}
+            <WorshipGuideSection
+              onOpenFullQuran={() => {
+                setCurrentView('quran');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onOpenDuas={() => {
+                setCurrentView('duas');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+
+            {/* History of the Holy Quran Carousel (Requested Feature) */}
+            <QuranHistoryCarousel
+              onExploreQuran={() => {
+                setCurrentView('quran');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
 
             {/* Courses & Training Modules */}
@@ -258,6 +283,15 @@ export default function App() {
             {/* Contact & Free Trial Section with UstadLeads info */}
             <ContactSection initialTrack={selectedTrackForTrial} />
           </div>
+        )}
+
+        {currentView === 'history' && (
+          <QuranHistoryCarousel
+            onExploreQuran={() => {
+              setCurrentView('quran');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         )}
 
         {currentView === 'mentor' && (
@@ -276,7 +310,10 @@ export default function App() {
         )}
 
         {currentView === 'quran' && (
-          <QuranReader />
+          <QuranReader
+            initialSurah={audioResumeSession?.surahNumber}
+            initialSeekTime={audioResumeSession?.seekTime}
+          />
         )}
 
         {currentView === 'qaida' && (
@@ -360,6 +397,19 @@ export default function App() {
           />
         )}
 
+        {currentView === 'worship_guide' && (
+          <WorshipGuideSection
+            onOpenFullQuran={() => {
+              setCurrentView('quran');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenDuas={() => {
+              setCurrentView('duas');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
         {currentView === 'admin' && (
           <AdminPanel
             lessons={lessons}
@@ -370,6 +420,21 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Floating Audio Resume Bar (when saved session exists) */}
+      <AudioResumeBar onResume={handleResumeAudio} />
+
+      {/* Floating Side Bar for Live Local Time, Namaz & Islamic Calendar */}
+      <PrayerTimeSidebar 
+        onOpenFullNamaz={() => {
+          setCurrentView('namaz');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenWorshipGuide={() => {
+          setCurrentView('worship_guide');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* Floating WhatsApp Action Button (ustadleads.com) */}
       <a

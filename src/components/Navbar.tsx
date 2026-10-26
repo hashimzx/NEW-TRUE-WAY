@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { User } from '../types';
 import { AnimatedLogo } from './AnimatedLogo';
-import { getAutoLocation, computePrayerTimes, getNextPrayer, formatLiveClock } from '../utils/prayerTimes';
 import { 
   BookOpen, 
   GraduationCap, 
@@ -13,13 +12,10 @@ import {
   Sparkles,
   Menu,
   X,
-  Phone,
-  Video,
-  MessageCircle,
-  HelpCircle,
-  Clock,
   BookMarked,
-  UserCheck
+  ChevronDown,
+  History,
+  Clock
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -43,103 +39,253 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenEnroll,
   onLogout,
   currency,
-  setCurrency,
-  timezone,
-  setTimezone
+  setCurrency
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [learnDropdownOpen, setLearnDropdownOpen] = useState(false);
+  const [spiritualDropdownOpen, setSpiritualDropdownOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
-  const [liveClock, setLiveClock] = useState(() => formatLiveClock(new Date()));
-  const [autoLoc] = useState(() => getAutoLocation());
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setLiveClock(formatLiveClock(new Date()));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const prayerTimes = computePrayerTimes(new Date(), autoLoc.lat, autoLoc.lng, true);
-  const nextPrayer = getNextPrayer(prayerTimes, new Date());
+  const learnTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const spiritualTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currencies: Array<'USD' | 'GBP' | 'EUR' | 'CAD' | 'AUD'> = ['USD', 'GBP', 'EUR', 'CAD', 'AUD'];
 
-  const timezones = [
-    { label: 'London (GMT)', value: 'Europe/London' },
-    { label: 'New York (EST)', value: 'America/New_York' },
-    { label: 'Toronto (EST)', value: 'America/Toronto' },
-    { label: 'Dubai (GST)', value: 'Asia/Dubai' },
-    { label: 'Sydney (AEST)', value: 'Australia/Sydney' },
-    { label: 'Islamabad (PKT)', value: 'Asia/Karachi' },
-  ];
-
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'courses', label: 'Courses', icon: GraduationCap },
-    { id: 'mentor', label: 'Meet Mentor', icon: GraduationCap, badge: 'Lead' },
-    { id: 'quran', label: 'Full Quran', icon: BookOpen, badge: '114 Surahs' },
-    { id: 'qaida', label: 'Madani Qaida', icon: Mic, badge: 'AI Voice' },
-    { id: 'namaz', label: 'Namaz Times', icon: Clock, badge: 'Auto' },
-    { id: 'duas', label: 'Daily Duas', icon: BookMarked, badge: 'Sunnah' },
-    { id: 'attendance', label: 'Attendance', icon: UserCheck, badge: 'Live' },
-    { id: 'contact', label: 'Contact', icon: Phone }
-  ];
-
-  const handleWhatsApp = () => {
-    window.open('https://wa.me/923068959085?text=Assalam-o-Alaikum%2C%20I%20want%20to%20inquire%20about%20the%20Online%20Quran%20Teacher%20Course', '_blank');
-  };
-
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-purple-100 text-slate-800 shadow-xs">
+    <header className="sticky top-0 z-50 py-3 px-3 sm:px-6 transition-all duration-300 pointer-events-none">
       
-      {/* Top International Announcement & Hotline Bar (with ustadleads.com contact info) */}
-      <div className="bg-gradient-to-r from-[#2e0854] via-[#3b0764] to-[#4a044e] text-white px-4 py-1.5 text-xs border-b border-purple-800/40">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      {/* Browserbase-style Floating Capsule Container */}
+      <div className="max-w-6xl mx-auto rounded-full bg-white/95 backdrop-blur-xl border border-[#6B1B7E]/20 shadow-xl shadow-[#6B1B7E]/10 px-4 sm:px-7 py-2.5 transition-all duration-300 pointer-events-auto">
+        <div className="flex items-center justify-between gap-3 sm:gap-6 min-h-[56px]">
           
-          <div className="flex items-center gap-2.5 text-purple-200">
-            <span className="inline-flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-600 text-white font-black px-2 py-0.5 rounded text-[10px] uppercase tracking-wider shadow-xs">
-              Batch Open
-            </span>
-            <span>Admissions Open for Online Quran Teacher Masterclass · Limited Seats!</span>
-            <span className="hidden sm:inline text-purple-400">·</span>
-            <button 
-              onClick={handleWhatsApp} 
-              className="hidden sm:inline-flex items-center gap-1 text-emerald-300 font-bold hover:text-emerald-200 transition"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp: +92 306 8959085</span>
-            </button>
-          </div>
+          {/* Big Brand Animated Logo (Prominent True Way Quran presence) */}
+          <button
+            onClick={() => {
+              setCurrentView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="flex items-center focus:outline-none text-left py-1 shrink-0 cursor-pointer transition-transform hover:scale-105"
+            aria-label="True Way Quran Home"
+          >
+            <AnimatedLogo size="md" showUrl={true} />
+          </button>
 
-          <div className="flex items-center gap-3 text-xs flex-wrap">
-            {/* Automatic Namaz & Local Time Widget */}
+          {/* Desktop Short Nav with Sub-sections (Portal & Time removed as requested) */}
+          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2.5">
+            
+            {/* 1. Home */}
             <button
               onClick={() => {
-                setCurrentView('namaz');
+                setCurrentView('home');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-[11px] font-bold text-white transition cursor-pointer"
-              title={`Auto-detected: ${autoLoc.city}, ${autoLoc.country}. Click to view full Namaz schedule.`}
+              className={`px-3.5 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
+                currentView === 'home'
+                  ? 'text-[#6B1B7E] bg-purple-100/80 shadow-2xs'
+                  : 'text-slate-700 hover:text-[#6B1B7E] hover:bg-purple-50/60'
+              }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <Clock className="w-3 h-3 text-pink-300" />
-              <span className="font-mono">{liveClock}</span>
-              <span className="text-purple-300">·</span>
-              <span className="text-amber-300 font-bold">{nextPrayer.name} in {nextPrayer.remainingFormatted}</span>
+              Home
             </button>
 
+            {/* 2. Learn Dropdown (Courses, Madani Qaida, History of Quran) */}
+            <div 
+              className="relative"
+              onMouseEnter={() => {
+                if (learnTimeoutRef.current) clearTimeout(learnTimeoutRef.current);
+                setLearnDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                learnTimeoutRef.current = setTimeout(() => setLearnDropdownOpen(false), 200);
+              }}
+            >
+              <button
+                onClick={() => setLearnDropdownOpen(!learnDropdownOpen)}
+                className={`px-3.5 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                  ['courses', 'qaida', 'history'].includes(currentView)
+                    ? 'text-[#6B1B7E] bg-purple-100/80 shadow-2xs'
+                    : 'text-slate-700 hover:text-[#6B1B7E] hover:bg-purple-50/60'
+                }`}
+              >
+                <span>Learn</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-[#E0107F] transition-transform ${learnDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {learnDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-60 bg-white/95 backdrop-blur-xl border border-[#6B1B7E]/20 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <button
+                    onClick={() => {
+                      setCurrentView('courses');
+                      setLearnDropdownOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-purple-50/80 transition flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <GraduationCap className="w-4 h-4 text-[#6B1B7E] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">Quran Courses</p>
+                      <p className="text-[10px] text-slate-500">Tajweed, Hifz, & Masterclass</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setCurrentView('qaida');
+                      setLearnDropdownOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-purple-50/80 transition flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <Mic className="w-4 h-4 text-[#E0107F] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">Madani Qaida</p>
+                      <p className="text-[10px] text-slate-500">AI Voice verification steps</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setCurrentView('history');
+                      setLearnDropdownOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-purple-50/80 transition flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <History className="w-4 h-4 text-[#5B2A9A] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">History of the Quran</p>
+                      <p className="text-[10px] text-slate-500">7-Milestone preservation</p>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Full Quran (All 114 Surahs) */}
+            <button
+              onClick={() => {
+                setCurrentView('quran');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`px-3.5 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                currentView === 'quran'
+                  ? 'text-white bg-gradient-to-r from-[#6B1B7E] to-[#E0107F] shadow-sm'
+                  : 'text-slate-700 hover:text-[#6B1B7E] hover:bg-purple-50/60'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#E0107F]" />
+              <span>Full Quran</span>
+              <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full ${
+                currentView === 'quran' ? 'bg-white/20 text-white' : 'bg-pink-100 text-[#E0107F]'
+              }`}>
+                114
+              </span>
+            </button>
+
+            {/* 4. Spiritual Dropdown (Namaz Times, Daily Duas) */}
+            <div 
+              className="relative"
+              onMouseEnter={() => {
+                if (spiritualTimeoutRef.current) clearTimeout(spiritualTimeoutRef.current);
+                setSpiritualDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                spiritualTimeoutRef.current = setTimeout(() => setSpiritualDropdownOpen(false), 200);
+              }}
+            >
+              <button
+                onClick={() => setSpiritualDropdownOpen(!spiritualDropdownOpen)}
+                className={`px-3.5 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                  ['namaz', 'duas', 'worship_guide'].includes(currentView)
+                    ? 'text-[#6B1B7E] bg-purple-100/80 shadow-2xs'
+                    : 'text-slate-700 hover:text-[#6B1B7E] hover:bg-purple-50/60'
+                }`}
+              >
+                <span>Spiritual</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-[#E0107F] transition-transform ${spiritualDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {spiritualDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-64 bg-white/95 backdrop-blur-xl border border-[#6B1B7E]/20 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <button
+                    onClick={() => {
+                      setCurrentView('worship_guide');
+                      setSpiritualDropdownOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-purple-50/80 transition flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 text-[#E0107F] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">True Way of Namaz & Roza</p>
+                      <p className="text-[10px] text-slate-500">Eid, Janazah, Postures & Right/Wrong</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setCurrentView('namaz');
+                      setSpiritualDropdownOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-purple-50/80 transition flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <Clock className="w-4 h-4 text-[#6B1B7E] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">Auto Namaz Times</p>
+                      <p className="text-[10px] text-slate-500">Full calculation schedule & Qibla</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setCurrentView('duas');
+                      setSpiritualDropdownOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-purple-50/80 transition flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <BookMarked className="w-4 h-4 text-[#5B2A9A] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">Authentic Duas Library</p>
+                      <p className="text-[10px] text-slate-500">Morning, Evening & Sunnah Duas</p>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 5. Contact */}
+            <button
+              onClick={() => {
+                setCurrentView('contact');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`px-3.5 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
+                currentView === 'contact'
+                  ? 'text-[#6B1B7E] bg-purple-100/80 shadow-2xs'
+                  : 'text-slate-700 hover:text-[#6B1B7E] hover:bg-purple-50/60'
+              }`}
+            >
+              Contact
+            </button>
+          </nav>
+
+          {/* Right Action Controls: Currency, Account Pill, Enroll CTA */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            
             {/* Currency Selector */}
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <button
                 onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
-                className="flex items-center gap-1 text-purple-200 hover:text-white font-medium py-0.5 px-2 rounded hover:bg-white/10 transition"
+                className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-[#6B1B7E] py-1.5 px-3 rounded-full hover:bg-purple-50 border border-purple-100 transition cursor-pointer"
               >
-                <Globe className="w-3.5 h-3.5 text-pink-300" />
+                <Globe className="w-3.5 h-3.5 text-[#E0107F]" />
                 <span>{currency}</span>
               </button>
 
               {currencyDropdownOpen && (
-                <div className="absolute right-0 mt-1 w-28 bg-[#2e0854] border border-purple-800 rounded-lg shadow-2xl py-1 z-50">
+                <div className="absolute right-0 mt-2 w-28 bg-white border border-[#6B1B7E]/20 rounded-2xl shadow-xl py-1.5 z-50">
                   {currencies.map((curr) => (
                     <button
                       key={curr}
@@ -147,109 +293,43 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setCurrency(curr);
                         setCurrencyDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3 py-1.5 text-xs hover:bg-purple-800 transition flex items-center justify-between ${
-                        currency === curr ? 'text-pink-300 font-bold bg-purple-900' : 'text-purple-200'
+                      className={`w-full text-left px-3.5 py-1.5 text-xs hover:bg-purple-50 transition flex items-center justify-between cursor-pointer ${
+                        currency === curr ? 'text-[#6B1B7E] font-bold bg-purple-50' : 'text-slate-600'
                       }`}
                     >
                       <span>{curr}</span>
-                      {currency === curr && <span>✓</span>}
+                      {currency === curr && <span className="text-[#E0107F]">✓</span>}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Timezone Selector */}
-            <div className="hidden sm:flex items-center gap-1.5 text-purple-300">
-              <select
-                value={timezone}
-                onChange={(e) => setTimezone(e.target.value)}
-                className="bg-purple-900/80 text-purple-100 text-xs border border-purple-700/60 rounded px-1.5 py-0.5 focus:outline-none focus:border-pink-400"
-              >
-                {timezones.map((tz) => (
-                  <option key={tz.value} value={tz.value}>
-                    {tz.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          
-          {/* Animated Futuristic Logo (PRESERVED EXACTLY AS USER DEMANDED) */}
-          <button
-            onClick={() => setCurrentView('home')}
-            className="flex items-center focus:outline-none text-left py-1 shrink-0"
-          >
-            <AnimatedLogo size="md" showUrl={true} />
-          </button>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setCurrentView(item.id)}
-                className={`relative px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                  currentView === item.id
-                    ? 'text-purple-950 bg-gradient-to-r from-purple-100/80 to-pink-50/70 border border-purple-300/80 shadow-xs'
-                    : 'text-slate-700 hover:text-purple-900 hover:bg-purple-50/60'
-                }`}
-              >
-                {item.icon && <item.icon className={`w-3.5 h-3.5 ${currentView === item.id ? 'text-pink-600' : 'text-purple-600'}`} />}
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span className="text-[9px] font-black bg-gradient-to-r from-purple-700 to-pink-600 text-white px-1.5 py-0.2 rounded-full shadow-xs">
-                    {item.badge}
-                  </span>
-                )}
-                {currentView === item.id && (
-                  <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-gradient-to-r from-purple-700 via-pink-600 to-pink-500 rounded-full" />
-                )}
-              </button>
-            ))}
-          </nav>
-
-          {/* Right Action Buttons: Login & Enroll Now */}
-          <div className="hidden sm:flex items-center gap-2.5">
-            {/* Login Button */}
+            {/* User Account / Login Button */}
             {currentUser ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {currentUser.role === 'admin' && (
                   <button
                     onClick={() => setCurrentView('admin')}
-                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
-                      currentView === 'admin'
-                        ? 'bg-purple-700 text-white border-purple-700'
-                        : 'bg-purple-50 text-purple-900 border-purple-200 hover:bg-purple-100'
-                    }`}
+                    className="p-2 text-xs font-bold rounded-full bg-purple-50 text-[#6B1B7E] border border-[#6B1B7E]/20 hover:bg-purple-100 cursor-pointer"
+                    title="Admin Panel"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
-                    <span>Admin</span>
+                    <ShieldCheck className="w-4 h-4 text-[#6B1B7E]" />
                   </button>
                 )}
 
                 <button
                   onClick={() => setCurrentView('dashboard')}
-                  className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition cursor-pointer ${
-                    currentView === 'dashboard'
-                      ? 'bg-purple-600 text-white border-purple-600'
-                      : 'bg-purple-50 text-purple-900 border-purple-200 hover:bg-purple-100'
-                  }`}
+                  className="px-3.5 py-1.5 text-xs font-bold rounded-full bg-purple-50 text-[#6B1B7E] border border-[#6B1B7E]/20 hover:bg-purple-100 flex items-center gap-1.5 cursor-pointer max-w-[130px] truncate"
                 >
-                  <UserIcon className="w-3.5 h-3.5" />
-                  <span className="max-w-[100px] truncate">{currentUser.name}</span>
+                  <UserIcon className="w-3.5 h-3.5 text-[#E0107F]" />
+                  <span className="truncate">{currentUser.name.split(' ')[0]}</span>
                 </button>
 
                 <button
                   onClick={onLogout}
                   title="Sign Out"
-                  className="p-2 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition cursor-pointer"
+                  className="p-1.5 text-slate-400 hover:text-red-600 rounded-full hover:bg-red-50 transition cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -257,114 +337,145 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="text-xs font-black text-purple-900 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-4 py-2.5 rounded-xl transition cursor-pointer"
+                className="text-xs font-black text-[#6B1B7E] bg-purple-50 hover:bg-purple-100 border border-[#6B1B7E]/20 px-4 py-2 rounded-full transition cursor-pointer"
               >
-                Login
+                Sign In
               </button>
             )}
 
-            {/* Enroll Now Button (Like ustadleads.com) */}
+            {/* Browserbase-style Gradient CTA Pill */}
             <button
               onClick={onOpenEnroll}
-              className="bg-gradient-to-r from-purple-800 via-purple-700 to-pink-600 hover:from-purple-900 hover:to-pink-700 text-white text-xs font-black px-4.5 py-2.5 rounded-xl shadow-md shadow-pink-500/25 hover:shadow-lg transition flex items-center gap-1.5 cursor-pointer"
+              className="bg-gradient-to-r from-[#6B1B7E] via-[#5B2A9A] to-[#E0107F] hover:opacity-95 text-white text-xs font-black px-4 sm:px-5 py-2 rounded-full shadow-md shadow-[#E0107F]/20 hover:shadow-lg transition flex items-center gap-1.5 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-pink-200" />
               <span>Enroll Now</span>
             </button>
-          </div>
 
-          {/* Mobile menu trigger */}
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={() => onOpenEnroll()}
-              className="sm:hidden bg-gradient-to-r from-purple-800 to-pink-600 text-white text-xs font-black px-3 py-1.5 rounded-lg"
-            >
-              Enroll Now
-            </button>
+            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-purple-900 bg-purple-50 border border-purple-200 rounded-xl cursor-pointer"
+              className="lg:hidden p-2 rounded-full text-slate-700 hover:bg-purple-50 transition cursor-pointer"
+              aria-label="Toggle Mobile Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-[#6B1B7E]" /> : <Menu className="w-5 h-5 text-[#6B1B7E]" />}
             </button>
+
           </div>
+
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-purple-100 px-4 pt-2 pb-6 space-y-3 shadow-lg">
-          <div className="space-y-1">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setCurrentView(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between ${
-                  currentView === item.id ? 'bg-purple-50 text-purple-900' : 'text-slate-700'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {item.icon && <item.icon className="w-4 h-4 text-purple-600" />}
-                  <span>{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span className="text-[10px] bg-purple-600 text-white px-2 py-0.5 rounded-full">
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            ))}
+        <div className="lg:hidden mt-2 bg-white/95 backdrop-blur-xl border border-[#6B1B7E]/20 rounded-3xl p-5 shadow-2xl space-y-3 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto">
+          <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+            <button
+              onClick={() => {
+                setCurrentView('home');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('quran');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Full Quran (114 Surahs)
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('courses');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Courses
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('qaida');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Madani Qaida
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('history');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              History of the Quran
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('worship_guide');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-gradient-to-r from-purple-50 to-pink-50 text-[#6B1B7E] font-bold"
+            >
+              🕌 True Way of Namaz & Roza Guide
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('namaz');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Namaz Schedule
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('duas');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Daily Duas
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('contact');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
+            >
+              Contact Support
+            </button>
           </div>
 
-          <div className="pt-3 border-t border-purple-100 flex flex-col gap-2">
+          <div className="pt-2 border-t border-purple-100 flex items-center justify-between">
+            <button
+              onClick={() => {
+                onOpenAuth();
+                setMobileMenuOpen(false);
+              }}
+              className="text-xs font-bold text-[#6B1B7E] px-4 py-1.5 rounded-full bg-purple-50"
+            >
+              {currentUser ? currentUser.name : 'Sign In'}
+            </button>
             <button
               onClick={() => {
                 onOpenEnroll();
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-3 text-center text-xs font-black bg-gradient-to-r from-purple-800 to-pink-600 text-white rounded-xl shadow-md"
+              className="text-xs font-black text-white px-4 py-1.5 rounded-full bg-gradient-to-r from-[#6B1B7E] to-[#E0107F]"
             >
-              Enroll Now (PKR 4,999)
-            </button>
-
-            {currentUser ? (
-              <button
-                onClick={() => {
-                  setCurrentView('dashboard');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full py-2.5 text-center text-xs font-bold bg-purple-50 border border-purple-200 text-purple-900 rounded-xl"
-              >
-                Dashboard ({currentUser.name})
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  onOpenAuth();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full py-2.5 text-center text-xs font-bold bg-purple-50 border border-purple-200 text-purple-900 rounded-xl"
-              >
-                Login
-              </button>
-            )}
-
-            <button
-              onClick={() => {
-                handleWhatsApp();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full py-2.5 text-center text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl flex items-center justify-center gap-1.5"
-            >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-              <span>WhatsApp: +92 306 8959085</span>
+              Enroll Now
             </button>
           </div>
         </div>
       )}
+
     </header>
   );
 };
