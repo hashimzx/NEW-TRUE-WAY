@@ -255,7 +255,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* 5. Contact */}
+            {/* 5. Pricing */}
+            <button
+              onClick={() => {
+                setCurrentView('pricing');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`px-3.5 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
+                ['pricing', 'courses'].includes(currentView)
+                  ? 'text-[#6B1B7E] bg-purple-100/80 shadow-2xs'
+                  : 'text-slate-700 hover:text-[#6B1B7E] hover:bg-purple-50/60'
+              }`}
+            >
+              Pricing
+            </button>
+
+            {/* 6. Contact */}
             <button
               onClick={() => {
                 setCurrentView('contact');
@@ -271,39 +286,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          {/* Right Action Controls: Currency, Account Pill, Enroll CTA */}
+          {/* Right Action Controls: Account Pill, Enroll CTA */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
-            {/* Currency Selector */}
-            <div className="relative hidden sm:block">
-              <button
-                onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
-                className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-[#6B1B7E] py-1.5 px-3 rounded-full hover:bg-purple-50 border border-purple-100 transition cursor-pointer"
-              >
-                <Globe className="w-3.5 h-3.5 text-[#E0107F]" />
-                <span>{currency}</span>
-              </button>
-
-              {currencyDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-28 bg-white border border-[#6B1B7E]/20 rounded-2xl shadow-xl py-1.5 z-50">
-                  {currencies.map((curr) => (
-                    <button
-                      key={curr}
-                      onClick={() => {
-                        setCurrency(curr);
-                        setCurrencyDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-3.5 py-1.5 text-xs hover:bg-purple-50 transition flex items-center justify-between cursor-pointer ${
-                        currency === curr ? 'text-[#6B1B7E] font-bold bg-purple-50' : 'text-slate-600'
-                      }`}
-                    >
-                      <span>{curr}</span>
-                      {currency === curr && <span className="text-[#E0107F]">✓</span>}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* User Account / Login Button */}
             {currentUser ? (
@@ -396,6 +380,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E]"
             >
               Courses
+            </button>
+            <button
+              onClick={() => {
+                setCurrentView('pricing');
+                setMobileMenuOpen(false);
+              }}
+              className="p-3 rounded-xl text-left bg-purple-50/60 text-[#6B1B7E] font-bold"
+            >
+              Pricing & Tuition
             </button>
             <button
               onClick={() => {

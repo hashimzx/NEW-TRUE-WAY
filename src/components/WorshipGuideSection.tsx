@@ -352,161 +352,332 @@ export const WorshipGuideSection: React.FC<{
     ]
   };
 
-  // Helper renderer for visual SVG posture cards
+  // Helper renderer for realistic human posture vector cards
   const renderPostureVisual = (type: StepItem['visualType']) => {
     switch (type) {
       case 'qiyam':
         return (
-          <div className="w-full h-44 bg-gradient-to-b from-purple-50 to-slate-100 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group">
-            {/* Ambient prayer rug pattern */}
+          <div className="w-full h-48 bg-gradient-to-b from-purple-50/70 via-white to-purple-50/40 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group shadow-inner">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#6B1B7E_1px,transparent_1px)] [background-size:16px_16px]" />
-            <svg viewBox="0 0 160 160" className="w-32 h-32 transition-transform group-hover:scale-105 duration-300">
-              {/* Prayer Rug */}
-              <path d="M 40 145 L 120 145 L 110 155 L 50 155 Z" fill="#6B1B7E" opacity="0.4" />
-              {/* Person Standing in Qiyam */}
-              <circle cx="80" cy="35" r="12" fill="#6B1B7E" />
-              {/* Torso */}
-              <path d="M 68 50 L 92 50 L 90 100 L 70 100 Z" fill="#5B2A9A" />
-              {/* Folded Arms on chest */}
-              <path d="M 66 58 Q 80 72 94 58" stroke="#E0107F" strokeWidth="6" strokeLinecap="round" fill="none" />
-              <circle cx="80" cy="65" r="4" fill="#FFFFFF" />
-              {/* Legs */}
-              <line x1="74" y1="100" x2="74" y2="145" stroke="#6B1B7E" strokeWidth="7" strokeLinecap="round" />
-              <line x1="86" y1="100" x2="86" y2="145" stroke="#6B1B7E" strokeWidth="7" strokeLinecap="round" />
-              {/* Focus Arrow pointing to ground */}
-              <line x1="86" y1="42" x2="98" y2="140" stroke="#E0107F" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.7" />
+            <svg viewBox="0 0 200 180" className="w-40 h-40 transition-transform group-hover:scale-105 duration-300">
+              <defs>
+                <linearGradient id="qiyamThobe" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="50%" stopColor="#F3EEF6" />
+                  <stop offset="100%" stopColor="#E5DCED" />
+                </linearGradient>
+                <linearGradient id="rugGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#6B1B7E" />
+                  <stop offset="50%" stopColor="#5B2A9A" />
+                  <stop offset="100%" stopColor="#6B1B7E" />
+                </linearGradient>
+              </defs>
+              {/* Prayer Rug with Mihrab arch */}
+              <ellipse cx="100" cy="165" rx="75" ry="12" fill="url(#rugGrad)" opacity="0.25" />
+              <path d="M 45 165 L 155 165 L 150 172 L 50 172 Z" fill="#6B1B7E" opacity="0.45" />
+              <path d="M 70 165 Q 100 156 130 165" stroke="#E0107F" strokeWidth="1.5" fill="none" opacity="0.6" />
+
+              {/* Head & Kufi Cap */}
+              {/* White Kufi */}
+              <path d="M 91 30 C 91 22, 109 22, 109 30 Z" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="1" />
+              <ellipse cx="100" cy="30" rx="9" ry="3.5" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              {/* Face and Beard Profile looking downwards */}
+              <path d="M 93 30 Q 93 42 98 44 Q 102 44 104 42 Q 107 42 107 30 Z" fill="#D4A373" />
+              {/* Trimmed beard */}
+              <path d="M 94 36 Q 96 46 102 46 Q 106 46 107 38 Q 104 44 98 43 Z" fill="#3D2619" opacity="0.8" />
+              {/* Gaze angle down to Sajdah */}
+              <line x1="97" y1="36" x2="70" y2="164" stroke="#E0107F" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+
+              {/* Neck */}
+              <path d="M 97 44 L 103 44 L 104 48 L 96 48 Z" fill="#D4A373" />
+
+              {/* Upper Thobe & Shoulders */}
+              <path d="M 80 56 Q 100 48 120 56 L 115 110 L 85 110 Z" fill="url(#qiyamThobe)" stroke="#C8C8C8" strokeWidth="1" />
+              {/* Collar detail */}
+              <path d="M 96 48 L 100 56 L 104 48" stroke="#6B1B7E" strokeWidth="1.5" fill="none" />
+
+              {/* Folded Arms on chest / upper abdomen (Right over left) */}
+              {/* Left arm sleeve */}
+              <path d="M 80 56 Q 74 76 90 82 L 106 82 Q 108 77 106 74 L 88 74 Z" fill="#EDE9FE" stroke="#C8C8C8" strokeWidth="0.8" />
+              {/* Right arm folded over */}
+              <path d="M 120 56 Q 124 74 112 80 L 92 80 Q 90 75 94 72 L 114 70 Z" fill="#FFFFFF" stroke="#6B1B7E" strokeWidth="1.2" />
+              {/* Right hand grasping left wrist */}
+              <rect x="91" y="73" width="16" height="7" rx="3.5" fill="#D4A373" />
+              <path d="M 97 73 L 97 80 M 100 73 L 100 80 M 103 73 L 103 80" stroke="#B08968" strokeWidth="0.7" />
+
+              {/* Lower Thobe / Jubbah draping to above ankles */}
+              <path d="M 85 110 Q 78 140 82 153 L 118 153 Q 122 140 115 110 Z" fill="url(#qiyamThobe)" stroke="#C8C8C8" strokeWidth="1" />
+              {/* Natural garment fold lines */}
+              <path d="M 94 112 Q 95 136 94 153" stroke="#D8CEE2" strokeWidth="1" fill="none" />
+              <path d="M 104 112 Q 105 138 106 153" stroke="#D8CEE2" strokeWidth="1" fill="none" />
+
+              {/* Feet resting neatly on prayer mat */}
+              <ellipse cx="90" cy="156" rx="5" ry="3" fill="#D4A373" />
+              <ellipse cx="110" cy="156" rx="5" ry="3" fill="#D4A373" />
             </svg>
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2 text-[10px] font-bold text-[#6B1B7E] bg-white/80 backdrop-blur-xs rounded-lg py-0.5 border border-purple-200">
-              <span>Gaze: Spot of Sujood</span>
-              <span>Hands: Right over Left</span>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2.5 text-[10px] font-bold text-[#6B1B7E] bg-white/90 backdrop-blur-xs rounded-lg py-1 border border-purple-200 shadow-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E0107F]" />
+                Gaze: Place of Sujood
+              </span>
+              <span className="font-semibold text-slate-700">Right Hand Over Left Wrist</span>
             </div>
           </div>
         );
 
       case 'ruku':
         return (
-          <div className="w-full h-44 bg-gradient-to-b from-purple-50 to-slate-100 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group">
+          <div className="w-full h-48 bg-gradient-to-b from-purple-50/70 via-white to-purple-50/40 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group shadow-inner">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#6B1B7E_1px,transparent_1px)] [background-size:16px_16px]" />
-            <svg viewBox="0 0 160 160" className="w-36 h-36 transition-transform group-hover:scale-105 duration-300">
+            <svg viewBox="0 0 200 180" className="w-44 h-44 transition-transform group-hover:scale-105 duration-300">
+              <defs>
+                <linearGradient id="rukuThobe" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#E7DEEE" />
+                </linearGradient>
+              </defs>
               {/* Prayer Rug */}
-              <rect x="25" y="145" width="110" height="8" rx="2" fill="#6B1B7E" opacity="0.3" />
-              {/* Head */}
-              <circle cx="48" cy="75" r="11" fill="#6B1B7E" />
-              {/* Horizontal Back (Level Plane) */}
-              <line x1="58" y1="75" x2="115" y2="75" stroke="#5B2A9A" strokeWidth="12" strokeLinecap="round" />
-              {/* Straight Level Guide Line */}
-              <line x1="40" y1="68" x2="125" y2="68" stroke="#E0107F" strokeWidth="1.5" strokeDasharray="2 2" />
-              {/* Arms extending straight to knees */}
-              <line x1="68" y1="75" x2="95" y2="115" stroke="#E0107F" strokeWidth="5" strokeLinecap="round" />
-              {/* Legs vertical */}
-              <line x1="112" y1="75" x2="112" y2="145" stroke="#6B1B7E" strokeWidth="8" strokeLinecap="round" />
-              {/* Kneecap Clasp */}
-              <circle cx="97" cy="115" r="5" fill="#E0107F" />
+              <ellipse cx="100" cy="165" rx="80" ry="12" fill="#6B1B7E" opacity="0.25" />
+              <path d="M 35 165 L 165 165 L 160 172 L 40 172 Z" fill="#6B1B7E" opacity="0.45" />
+
+              {/* Perfectly Straight Alignment Guide Bar */}
+              <line x1="40" y1="78" x2="155" y2="78" stroke="#E0107F" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.75" />
+
+              {/* Head with Kufi aligned with spine */}
+              <path d="M 45 84 C 42 77, 53 73, 58 79 Z" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              <ellipse cx="56" cy="85" rx="7" ry="6" fill="#D4A373" />
+              <path d="M 52 87 Q 56 92 60 88" stroke="#3D2619" strokeWidth="1.5" fill="none" />
+
+              {/* Horizontal Torso & Back in Thobe (Level Plane) */}
+              <path d="M 58 80 L 138 80 Q 146 84 142 98 L 70 98 Q 58 96 58 80 Z" fill="url(#rukuThobe)" stroke="#6B1B7E" strokeWidth="1.2" />
+              {/* Back drape fold */}
+              <line x1="68" y1="88" x2="135" y2="88" stroke="#D8CEE2" strokeWidth="1" />
+
+              {/* Straight Vertical Legs in Thobe */}
+              <path d="M 125 98 L 123 155 L 142 155 L 142 98 Z" fill="url(#rukuThobe)" stroke="#C8C8C8" strokeWidth="1" />
+              {/* Feet */}
+              <ellipse cx="132" cy="158" rx="7" ry="3" fill="#D4A373" />
+
+              {/* Arms extending down firmly grasping knees */}
+              <path d="M 78 94 L 118 126" stroke="#EDE9FE" strokeWidth="9" strokeLinecap="round" />
+              <path d="M 78 94 L 118 126" stroke="#6B1B7E" strokeWidth="2" strokeLinecap="round" fill="none" />
+
+              {/* Hands with spread fingers firmly clasping kneecap */}
+              <ellipse cx="120" cy="128" rx="6" ry="5" fill="#D4A373" stroke="#6B1B7E" strokeWidth="1" />
+              <path d="M 117 125 L 123 125 M 117 128 L 124 128 M 118 131 L 123 131" stroke="#B08968" strokeWidth="1" />
+
+              {/* Level indicator text badge inside visual */}
+              <rect x="75" y="60" width="70" height="16" rx="8" fill="#E0107F" />
+              <text x="110" y="71" fill="#FFFFFF" fontSize="8.5" fontWeight="bold" textAnchor="middle">180° Level Back</text>
             </svg>
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2 text-[10px] font-bold text-[#6B1B7E] bg-white/80 backdrop-blur-xs rounded-lg py-0.5 border border-purple-200">
-              <span>Back: 180° Level Horizontal</span>
-              <span>Hands: Grip Kneecaps</span>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2.5 text-[10px] font-bold text-[#6B1B7E] bg-white/90 backdrop-blur-xs rounded-lg py-1 border border-purple-200 shadow-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Spine Perfectly Horizontal
+              </span>
+              <span className="font-semibold text-slate-700">Fingers Spread on Knees</span>
             </div>
           </div>
         );
 
       case 'sujood':
         return (
-          <div className="w-full h-44 bg-gradient-to-b from-purple-50 to-slate-100 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group">
+          <div className="w-full h-48 bg-gradient-to-b from-purple-50/70 via-white to-purple-50/40 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group shadow-inner">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#6B1B7E_1px,transparent_1px)] [background-size:16px_16px]" />
-            <svg viewBox="0 0 160 160" className="w-36 h-36 transition-transform group-hover:scale-105 duration-300">
-              {/* Rug */}
-              <rect x="15" y="142" width="130" height="8" rx="2" fill="#6B1B7E" opacity="0.4" />
-              {/* Forehead & Nose on floor */}
-              <circle cx="38" cy="132" r="10" fill="#6B1B7E" />
-              <ellipse cx="32" cy="137" rx="3" ry="2" fill="#E0107F" />
-              {/* Palms on floor */}
-              <ellipse cx="48" cy="140" rx="4" ry="2" fill="#E0107F" />
-              {/* Elevated Forearms & Elbows (Winged) */}
-              <path d="M 42 128 L 52 108 L 65 120" stroke="#E0107F" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              {/* Arch of Torso */}
-              <path d="M 44 126 Q 75 92 105 110" stroke="#5B2A9A" strokeWidth="11" strokeLinecap="round" fill="none" />
+            <svg viewBox="0 0 200 180" className="w-44 h-44 transition-transform group-hover:scale-105 duration-300">
+              <defs>
+                <linearGradient id="sujoodThobe" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#E4D9EB" />
+                </linearGradient>
+              </defs>
+              {/* Prayer Rug */}
+              <ellipse cx="100" cy="165" rx="85" ry="12" fill="#6B1B7E" opacity="0.25" />
+              <path d="M 25 165 L 175 165 L 170 173 L 30 173 Z" fill="#6B1B7E" opacity="0.45" />
+
+              {/* 7 Touch Points Highlight Dots */}
+              {/* Forehead & Nose (1) */}
+              <circle cx="48" cy="158" r="4.5" fill="#E0107F" className="animate-ping opacity-75" />
+              <circle cx="48" cy="158" r="3.5" fill="#E0107F" />
+              {/* Palms (2 & 3) */}
+              <circle cx="68" cy="158" r="3.5" fill="#E0107F" />
+              {/* Knees (4 & 5) */}
+              <circle cx="118" cy="158" r="3.5" fill="#E0107F" />
+              {/* Toes (6 & 7) */}
+              <circle cx="160" cy="156" r="3.5" fill="#E0107F" />
+
+              {/* Prostrating Head & Forehead + Nose pressed to mat */}
+              <ellipse cx="50" cy="150" rx="8" ry="7" fill="#D4A373" />
+              {/* Kufi Cap */}
+              <path d="M 45 144 C 47 138, 56 138, 58 145 Z" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              {/* Beard */}
+              <path d="M 44 153 Q 48 156 52 153" stroke="#3D2619" strokeWidth="1.5" fill="none" />
+
+              {/* Hands flat on rug next to shoulders */}
+              <ellipse cx="68" cy="156" rx="6" ry="3.5" fill="#D4A373" stroke="#6B1B7E" strokeWidth="1" />
+
+              {/* Elevated Winged Forearms & Elbows (High off ground) */}
+              <path d="M 58 144 L 74 122 L 72 154" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M 58 144 L 74 122 L 72 154" stroke="#6B1B7E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+
+              {/* Elegant Arch of Torso in Thobe */}
+              <path d="M 55 142 Q 95 106 132 124 L 126 156 Q 102 144 80 148 Z" fill="url(#sujoodThobe)" stroke="#6B1B7E" strokeWidth="1.2" />
+              <path d="M 85 125 Q 105 122 120 135" stroke="#D8CEE2" strokeWidth="1" fill="none" />
+
               {/* Thighs & Knees on floor */}
-              <line x1="105" y1="110" x2="88" y2="140" stroke="#6B1B7E" strokeWidth="8" strokeLinecap="round" />
-              <line x1="88" y1="140" x2="125" y2="140" stroke="#6B1B7E" strokeWidth="7" strokeLinecap="round" />
-              {/* Feet with Toes pointing forward */}
-              <line x1="125" y1="140" x2="135" y2="125" stroke="#E0107F" strokeWidth="4" strokeLinecap="round" />
+              <path d="M 132 124 L 115 158 L 152 158 Q 150 142 132 124 Z" fill="url(#sujoodThobe)" stroke="#C8C8C8" strokeWidth="1" />
+
+              {/* Upright feet with toes bent forward toward Qibla */}
+              <path d="M 152 158 L 164 148 L 165 157 Z" fill="#D4A373" stroke="#6B1B7E" strokeWidth="1" />
+              <path d="M 160 157 L 166 157" stroke="#E0107F" strokeWidth="2" strokeLinecap="round" />
             </svg>
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2 text-[10px] font-bold text-[#6B1B7E] bg-white/80 backdrop-blur-xs rounded-lg py-0.5 border border-purple-200">
-              <span>7 Touch Bones Firmly</span>
-              <span>Elbows Lifted Off Ground</span>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2.5 text-[10px] font-bold text-[#6B1B7E] bg-white/90 backdrop-blur-xs rounded-lg py-1 border border-purple-200 shadow-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E0107F]" />
+                Forehead + Nose Pressed Firmly
+              </span>
+              <span className="font-semibold text-slate-700">Elbows Winged Off Floor</span>
             </div>
           </div>
         );
 
       case 'jalsah':
         return (
-          <div className="w-full h-44 bg-gradient-to-b from-purple-50 to-slate-100 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group">
+          <div className="w-full h-48 bg-gradient-to-b from-purple-50/70 via-white to-purple-50/40 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group shadow-inner">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#6B1B7E_1px,transparent_1px)] [background-size:16px_16px]" />
-            <svg viewBox="0 0 160 160" className="w-32 h-32 transition-transform group-hover:scale-105 duration-300">
-              {/* Rug */}
-              <rect x="20" y="142" width="120" height="8" rx="2" fill="#6B1B7E" opacity="0.4" />
-              {/* Head */}
-              <circle cx="80" cy="55" r="11" fill="#6B1B7E" />
-              {/* Upright Back */}
-              <line x1="80" y1="66" x2="80" y2="115" stroke="#5B2A9A" strokeWidth="12" strokeLinecap="round" />
-              {/* Legs in Iftirash (Sitting on left foot) */}
-              <path d="M 80 115 L 105 138 L 55 138" stroke="#6B1B7E" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              {/* Arms on thighs */}
-              <line x1="76" y1="78" x2="62" y2="118" stroke="#E0107F" strokeWidth="5" strokeLinecap="round" />
-              {/* Pointing Index Finger at Shahadah */}
-              <line x1="62" y1="118" x2="50" y2="114" stroke="#E0107F" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="49" cy="114" r="2" fill="#E0107F" />
+            <svg viewBox="0 0 200 180" className="w-40 h-40 transition-transform group-hover:scale-105 duration-300">
+              <defs>
+                <linearGradient id="jalsahThobe" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#E6DCEE" />
+                </linearGradient>
+              </defs>
+              {/* Prayer Rug */}
+              <ellipse cx="100" cy="165" rx="80" ry="12" fill="#6B1B7E" opacity="0.25" />
+              <path d="M 30 165 L 170 165 L 165 172 L 35 172 Z" fill="#6B1B7E" opacity="0.45" />
+
+              {/* Head with Kufi Cap tilted serenely downward */}
+              <path d="M 85 46 C 85 38, 103 38, 103 46 Z" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              <ellipse cx="94" cy="46" rx="8.5" ry="3.5" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              <path d="M 87 47 Q 86 58 92 60 Q 97 60 100 57 L 100 47 Z" fill="#D4A373" />
+              <path d="M 88 52 Q 91 61 96 61 Q 100 61 100 54" stroke="#3D2619" strokeWidth="1.2" fill="none" />
+
+              {/* Neck & Upright Back */}
+              <path d="M 91 60 L 97 60 L 98 65 L 90 65 Z" fill="#D4A373" />
+              <path d="M 76 72 Q 94 65 112 72 L 115 125 L 75 125 Z" fill="url(#jalsahThobe)" stroke="#6B1B7E" strokeWidth="1.2" />
+
+              {/* Lower Thobe Draped across folded legs in Iftirash posture */}
+              <path d="M 68 125 Q 60 156 70 162 L 135 162 Q 140 148 122 125 Z" fill="url(#jalsahThobe)" stroke="#C8C8C8" strokeWidth="1" />
+
+              {/* Left hand resting open on left thigh */}
+              <path d="M 82 82 L 72 126" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round" />
+              <ellipse cx="72" cy="128" rx="5" ry="3" fill="#D4A373" />
+
+              {/* Right arm & Hand with Index Finger Raised in Tashahhud */}
+              <path d="M 104 82 L 95 122" stroke="#FFFFFF" strokeWidth="7" strokeLinecap="round" />
+              <path d="M 104 82 L 95 122" stroke="#6B1B7E" strokeWidth="1.2" fill="none" />
+              {/* Clenched fist with raised index finger */}
+              <circle cx="95" cy="124" r="4.5" fill="#D4A373" stroke="#6B1B7E" strokeWidth="0.8" />
+              <line x1="95" y1="124" x2="84" y2="116" stroke="#E0107F" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="83" cy="115" r="1.5" fill="#E0107F" />
+
+              {/* Tashahhud Tawheed badge */}
+              <rect x="52" y="100" width="56" height="15" rx="7.5" fill="#E0107F" />
+              <text x="80" y="110" fill="#FFFFFF" fontSize="7.5" fontWeight="bold" textAnchor="middle">Shahadah Finger</text>
             </svg>
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2 text-[10px] font-bold text-[#6B1B7E] bg-white/80 backdrop-blur-xs rounded-lg py-0.5 border border-purple-200">
-              <span>Sit in Iftirash</span>
-              <span>Point Finger at Tawheed</span>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2.5 text-[10px] font-bold text-[#6B1B7E] bg-white/90 backdrop-blur-xs rounded-lg py-1 border border-purple-200 shadow-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
+                Sit on Left Foot (Iftirash)
+              </span>
+              <span className="font-semibold text-slate-700">Point Finger at Tawheed</span>
             </div>
           </div>
         );
 
       case 'eid_takbir':
         return (
-          <div className="w-full h-44 bg-gradient-to-b from-purple-50 to-slate-100 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group">
+          <div className="w-full h-48 bg-gradient-to-b from-purple-50/70 via-white to-purple-50/40 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group shadow-inner">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#6B1B7E_1px,transparent_1px)] [background-size:16px_16px]" />
-            <svg viewBox="0 0 160 160" className="w-32 h-32 transition-transform group-hover:scale-105 duration-300">
-              <circle cx="80" cy="45" r="12" fill="#6B1B7E" />
-              <line x1="80" y1="57" x2="80" y2="115" stroke="#5B2A9A" strokeWidth="12" strokeLinecap="round" />
-              {/* Raised hands to ears */}
-              <path d="M 65 65 L 50 48" stroke="#E0107F" strokeWidth="5" strokeLinecap="round" />
-              <path d="M 95 65 L 110 48" stroke="#E0107F" strokeWidth="5" strokeLinecap="round" />
-              <circle cx="48" cy="45" r="4" fill="#E0107F" />
-              <circle cx="112" cy="45" r="4" fill="#E0107F" />
-              {/* Legs */}
-              <line x1="74" y1="115" x2="74" y2="148" stroke="#6B1B7E" strokeWidth="7" strokeLinecap="round" />
-              <line x1="86" y1="115" x2="86" y2="148" stroke="#6B1B7E" strokeWidth="7" strokeLinecap="round" />
+            <svg viewBox="0 0 200 180" className="w-40 h-40 transition-transform group-hover:scale-105 duration-300">
+              <defs>
+                <linearGradient id="eidThobe" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="100%" stopColor="#EDE5F3" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="100" cy="165" rx="75" ry="12" fill="#6B1B7E" opacity="0.25" />
+              <path d="M 40 165 L 160 165 L 155 172 L 45 172 Z" fill="#6B1B7E" opacity="0.4" />
+
+              {/* Head with Kufi */}
+              <path d="M 91 32 C 91 24, 109 24, 109 32 Z" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="1" />
+              <ellipse cx="100" cy="32" rx="9" ry="3.5" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              <path d="M 93 32 Q 93 44 100 46 Q 107 44 107 32 Z" fill="#D4A373" />
+              <path d="M 94 38 Q 97 47 100 47 Q 104 47 106 39" stroke="#3D2619" strokeWidth="1.2" fill="none" />
+
+              {/* Both Hands Raised to Earlobes */}
+              {/* Left hand & arm raised */}
+              <path d="M 85 58 L 70 42 L 68 32" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round" />
+              <path d="M 85 58 L 70 42 L 68 32" stroke="#6B1B7E" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+              <ellipse cx="68" cy="28" rx="4.5" ry="6" fill="#D4A373" stroke="#E0107F" strokeWidth="1" />
+
+              {/* Right hand & arm raised */}
+              <path d="M 115 58 L 130 42 L 132 32" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round" />
+              <path d="M 115 58 L 130 42 L 132 32" stroke="#6B1B7E" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+              <ellipse cx="132" cy="28" rx="4.5" ry="6" fill="#D4A373" stroke="#E0107F" strokeWidth="1" />
+
+              {/* Torso & Thobe */}
+              <path d="M 82 56 Q 100 48 118 56 L 115 115 L 85 115 Z" fill="url(#eidThobe)" stroke="#6B1B7E" strokeWidth="1.2" />
+              <path d="M 85 115 Q 78 142 82 154 L 118 154 Q 122 142 115 115 Z" fill="url(#eidThobe)" stroke="#C8C8C8" strokeWidth="1" />
+
+              {/* Feet */}
+              <ellipse cx="90" cy="157" rx="5" ry="3" fill="#D4A373" />
+              <ellipse cx="110" cy="157" rx="5" ry="3" fill="#D4A373" />
             </svg>
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2 text-[10px] font-bold text-[#6B1B7E] bg-white/80 backdrop-blur-xs rounded-lg py-0.5 border border-purple-200">
-              <span>Raise Hands to Ears</span>
-              <span>3 Extra Takbeerat</span>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2.5 text-[10px] font-bold text-[#6B1B7E] bg-white/90 backdrop-blur-xs rounded-lg py-1 border border-purple-200 shadow-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E0107F]" />
+                Raise Palms to Earlobes
+              </span>
+              <span className="font-semibold text-slate-700">Say Allāhu Akbar</span>
             </div>
           </div>
         );
 
       case 'janazah_stand':
         return (
-          <div className="w-full h-44 bg-gradient-to-b from-purple-50 to-slate-100 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group">
+          <div className="w-full h-48 bg-gradient-to-b from-purple-50/70 via-white to-purple-50/40 rounded-2xl flex items-center justify-center border border-[#6B1B7E]/15 relative overflow-hidden group shadow-inner">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#6B1B7E_1px,transparent_1px)] [background-size:16px_16px]" />
-            <svg viewBox="0 0 160 160" className="w-32 h-32 transition-transform group-hover:scale-105 duration-300">
-              {/* Congregation Row */}
-              <circle cx="80" cy="38" r="11" fill="#6B1B7E" />
-              <line x1="80" y1="49" x2="80" y2="105" stroke="#5B2A9A" strokeWidth="11" strokeLinecap="round" />
-              <line x1="74" y1="105" x2="74" y2="145" stroke="#6B1B7E" strokeWidth="6" strokeLinecap="round" />
-              <line x1="86" y1="105" x2="86" y2="145" stroke="#6B1B7E" strokeWidth="6" strokeLinecap="round" />
-              {/* Hands folded across chest */}
-              <path d="M 68 56 Q 80 66 92 56" stroke="#E0107F" strokeWidth="5" strokeLinecap="round" fill="none" />
-              {/* Zero Ruku & Zero Sujood Badge */}
-              <rect x="25" y="12" width="110" height="18" rx="9" fill="#E0107F" />
-              <text x="80" y="24" fill="#FFFFFF" fontSize="9" fontWeight="bold" textAnchor="middle">4 Takbeers · No Ruku/Sajdah</text>
+            <svg viewBox="0 0 200 180" className="w-44 h-44 transition-transform group-hover:scale-105 duration-300">
+              {/* Funeral congregation standing shoulder to shoulder */}
+              <ellipse cx="100" cy="165" rx="90" ry="10" fill="#6B1B7E" opacity="0.25" />
+
+              {/* Left worshipper (partial silhouette) */}
+              <circle cx="58" cy="46" r="8" fill="#5B2A9A" opacity="0.4" />
+              <path d="M 44 64 Q 58 58 72 64 L 68 148 L 48 148 Z" fill="#EDE9FE" opacity="0.7" />
+
+              {/* Right worshipper (partial silhouette) */}
+              <circle cx="142" cy="46" r="8" fill="#5B2A9A" opacity="0.4" />
+              <path d="M 128 64 Q 142 58 156 64 L 152 148 L 132 148 Z" fill="#EDE9FE" opacity="0.7" />
+
+              {/* Center Imam / Lead worshipper */}
+              <path d="M 91 32 C 91 24, 109 24, 109 32 Z" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="1" />
+              <ellipse cx="100" cy="32" rx="9" ry="3.5" fill="#FFFFFF" stroke="#C8C8C8" strokeWidth="0.8" />
+              <path d="M 93 32 Q 93 44 100 46 Q 107 44 107 32 Z" fill="#D4A373" />
+              <path d="M 80 56 Q 100 48 120 56 L 115 152 L 85 152 Z" fill="#FFFFFF" stroke="#6B1B7E" strokeWidth="1.2" />
+              {/* Folded hands across chest */}
+              <rect x="90" y="74" width="20" height="9" rx="4" fill="#D4A373" stroke="#6B1B7E" strokeWidth="1" />
+
+              {/* Stand Only badge */}
+              <rect x="35" y="12" width="130" height="18" rx="9" fill="#E0107F" />
+              <text x="100" y="24" fill="#FFFFFF" fontSize="9.5" fontWeight="bold" textAnchor="middle">Standing Only · 4 Takbeers · No Ruku/Sajdah</text>
             </svg>
-            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2 text-[10px] font-bold text-[#6B1B7E] bg-white/80 backdrop-blur-xs rounded-lg py-0.5 border border-purple-200">
-              <span>Standing Only</span>
-              <span>Dua of Forgiveness</span>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between px-2.5 text-[10px] font-bold text-[#6B1B7E] bg-white/90 backdrop-blur-xs rounded-lg py-1 border border-purple-200 shadow-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E0107F]" />
+                Straight Standing Row
+              </span>
+              <span className="font-semibold text-slate-700">Supplication for Deceased</span>
             </div>
           </div>
         );
@@ -592,14 +763,22 @@ export const WorshipGuideSection: React.FC<{
 
         {/* TAB 1: DAILY NAMAZ POSTURES & RIGHT/WRONG */}
         {activeTab === 'namaz' && (
-          <div className="space-y-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between px-1 text-xs text-slate-500 font-semibold md:hidden">
+              <span className="flex items-center gap-1.5 text-[#6B1B7E]">
+                <span className="w-2 h-2 rounded-full bg-[#E0107F] animate-pulse" />
+                Swipe postures horizontally (1-4)
+              </span>
+              <span>Slide →</span>
+            </div>
+
+            <div className="flex md:grid md:grid-cols-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-4 md:pb-0 gap-6 md:gap-8 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
               {namazSteps.map((step) => {
                 const isPlaying = playingAudioId === step.id;
                 return (
                   <div 
                     key={step.id}
-                    className="bg-white rounded-3xl p-6 sm:p-7 border border-[#6B1B7E]/15 shadow-lg shadow-purple-900/5 space-y-6 hover:border-[#6B1B7E]/30 transition duration-300"
+                    className="w-[86vw] sm:w-[440px] md:w-auto shrink-0 snap-center bg-white rounded-3xl p-6 sm:p-7 border border-[#6B1B7E]/15 shadow-lg shadow-purple-900/5 space-y-6 hover:border-[#6B1B7E]/30 transition duration-300"
                   >
                     {/* Header */}
                     <div className="flex items-start justify-between gap-4">
@@ -731,13 +910,13 @@ export const WorshipGuideSection: React.FC<{
             </div>
 
             {/* 2 Rak'at Steps */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex md:grid md:grid-cols-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-4 md:pb-0 gap-6 md:gap-8 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
               {eidSteps.map((step) => {
                 const isPlaying = playingAudioId === step.id;
                 return (
                   <div 
                     key={step.id}
-                    className="bg-white rounded-3xl p-6 sm:p-7 border border-[#6B1B7E]/15 shadow-lg shadow-purple-900/5 space-y-6"
+                    className="w-[86vw] sm:w-[440px] md:w-auto shrink-0 snap-center bg-white rounded-3xl p-6 sm:p-7 border border-[#6B1B7E]/15 shadow-lg shadow-purple-900/5 space-y-6"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">

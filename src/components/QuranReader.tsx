@@ -27,8 +27,14 @@ import {
   Search, 
   Grid, 
   X,
-  Loader2
+  Loader2,
+  Info,
+  History,
+  FileText,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
+import { SURAH_HISTORICAL_BACKGROUNDS, getAyahTafseerAndHistory } from '../utils/quranTafseerData';
 
 interface QuranReaderProps {
   initialSurah?: number;
@@ -65,6 +71,8 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
   // Full Surah & Ayahs state
   const [fullSurahData, setFullSurahData] = useState<FullSurahData | null>(null);
   const [isLoadingAyahs, setIsLoadingAyahs] = useState<boolean>(true);
+  const [expandedTafseerAyah, setExpandedTafseerAyah] = useState<number | null>(null);
+  const [showSurahHistoricalDetails, setShowSurahHistoricalDetails] = useState<boolean>(true);
 
   // 114 Surahs Browser Modal / Drawer State
   const [isSurahModalOpen, setIsSurahModalOpen] = useState<boolean>(false);
@@ -1114,7 +1122,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
           </div>
 
           {/* Surah Header Banner */}
-          <div className="bg-white border-2 border-[#6B1B7E]/20 rounded-3xl p-6 sm:p-8 text-center space-y-3 shadow-sm">
+          <div className="bg-white border-2 border-[#6B1B7E]/20 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-sm">
             <span className="text-xs font-bold text-[#6B1B7E] uppercase tracking-widest bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
               Surah {surahMeta.number} · {surahMeta.revelationType} Revelation · {surahMeta.ayahsCount} Verses · Juz {surahMeta.juz}
             </span>
@@ -1127,6 +1135,41 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
             <p className="text-xs text-slate-500 max-w-xl mx-auto">
               Recitation streamed in high-definition audio by {currentReciter.name}.
             </p>
+
+            {/* Surah Revelation History & Context Card */}
+            {(() => {
+              const bgInfo = SURAH_HISTORICAL_BACKGROUNDS[selectedSurahNumber];
+              return (
+                <div className="mt-4 pt-4 border-t border-purple-100 text-left bg-gradient-to-r from-purple-50/70 via-white to-pink-50/40 p-4 sm:p-5 rounded-2xl border border-[#6B1B7E]/15 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-xs font-black text-[#6B1B7E] uppercase tracking-wider">
+                      <History className="w-4 h-4 text-[#E0107F]" />
+                      <span>Surah Revelation History & Context</span>
+                    </span>
+                    <button
+                      onClick={() => setShowSurahHistoricalDetails(!showSurahHistoricalDetails)}
+                      className="text-xs font-bold text-[#6B1B7E] hover:text-[#E0107F] flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>{showSurahHistoricalDetails ? 'Hide Background' : 'Show Background'}</span>
+                      {showSurahHistoricalDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+
+                  {showSurahHistoricalDetails && (
+                    <div className="space-y-2 text-xs text-slate-700 leading-relaxed">
+                      <p>
+                        <strong>Historical Setting:</strong> {bgInfo?.historicalSetting || `Surah ${surahMeta.englishName} was revealed during the ${surahMeta.revelationType} era in Makkah/Madinah, establishing core principles of faith and guidance for the believers.`}
+                      </p>
+                      {bgInfo?.virtueAndSignificance && (
+                        <p className="text-purple-900 bg-purple-100/70 p-2 rounded-xl border border-purple-200">
+                          <strong>Virtue & Spiritual Significance:</strong> {bgInfo.virtueAndSignificance}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Verses Breakdown (ALL AYAT OF THE SURAH) */}
@@ -1139,6 +1182,14 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
             <div className="space-y-4">
               {fullSurahData.ayahs.map((ayah, index) => {
                 const isThisPlaying = isPlaying && activeAyahIndex === index;
+                const isTafseerOpen = expandedTafseerAyah === index;
+                const ayahInsight = getAyahTafseerAndHistory(
+                  selectedSurahNumber,
+                  ayah.numberInSurah,
+                  surahMeta.englishName,
+                  ayah.arabic,
+                  ayah.translation
+                );
 
                 const arabicClass = {
                   md: 'text-2xl leading-loose',
@@ -1155,7 +1206,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                         : 'bg-white border-purple-100 hover:border-[#6B1B7E]/40 hover:shadow-sm'
                     }`}
                   >
-                    <div className="flex items-center justify-between pb-3 border-b border-purple-100 mb-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-purple-100 mb-4">
                       <div className="flex items-center gap-2">
                         <span className="w-8 h-8 rounded-full bg-purple-100 text-[#6B1B7E] font-bold text-xs flex items-center justify-center">
                           {ayah.numberInSurah}
@@ -1165,7 +1216,7 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <button
                           onClick={() => playAyah(index)}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
@@ -1199,7 +1250,20 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                           className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-[#5B2A9A] rounded-lg text-xs font-bold border border-purple-200 flex items-center gap-1 cursor-pointer"
                         >
                           <Mic className="w-3.5 h-3.5 text-[#E0107F]" />
-                          <span>Practice Reciting</span>
+                          <span>Practice</span>
+                        </button>
+
+                        <button
+                          onClick={() => setExpandedTafseerAyah(isTafseerOpen ? null : index)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border ${
+                            isTafseerOpen
+                              ? 'bg-gradient-to-r from-[#6B1B7E] to-[#E0107F] text-white border-transparent shadow-xs'
+                              : 'bg-pink-50 hover:bg-pink-100 text-[#E0107F] border-pink-200'
+                          }`}
+                          title="View Meaning, History & Tafseer Summary"
+                        >
+                          <Info className="w-3.5 h-3.5" />
+                          <span>{isTafseerOpen ? 'Hide Meaning & History' : 'Meaning & History'}</span>
                         </button>
                       </div>
                     </div>
@@ -1219,6 +1283,54 @@ export const QuranReader: React.FC<QuranReaderProps> = ({
                     {showTranslation && (
                       <div className="pt-2 text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
                         {ayah.translation}
+                      </div>
+                    )}
+
+                    {/* Expandable Tafseer, Asbab al-Nuzul & Ayah Summary Drawer */}
+                    {isTafseerOpen && (
+                      <div className="mt-4 pt-4 border-t border-purple-200 bg-gradient-to-br from-purple-50/80 via-white to-pink-50/40 rounded-2xl p-4 sm:p-5 border space-y-3 animate-fadeIn">
+                        <div className="flex items-center justify-between">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#6B1B7E] uppercase tracking-wider">
+                            <BookOpen className="w-4 h-4 text-[#E0107F]" />
+                            <span>Ayah {ayah.numberInSurah} · Meaning, History & Tafseer</span>
+                          </span>
+                          <span className="text-[10px] text-slate-500 font-medium">
+                            {ayahInsight.tafseerReference}
+                          </span>
+                        </div>
+
+                        {/* Meaning Breakdown */}
+                        <div className="bg-white p-3 rounded-xl border border-purple-100 space-y-1">
+                          <p className="text-xs font-bold text-[#6B1B7E] flex items-center gap-1">
+                            <Sparkles className="w-3.5 h-3.5 text-[#E0107F]" />
+                            <span>Word Meaning & Spiritual Core:</span>
+                          </p>
+                          <p className="text-xs text-slate-700 leading-relaxed">
+                            {ayahInsight.meaning}
+                          </p>
+                        </div>
+
+                        {/* Revelation History (Asbab al-Nuzul) */}
+                        <div className="bg-white p-3 rounded-xl border border-purple-100 space-y-1">
+                          <p className="text-xs font-bold text-[#5B2A9A] flex items-center gap-1">
+                            <History className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Historical Context & Cause of Revelation (Asbab al-Nuzul):</span>
+                          </p>
+                          <p className="text-xs text-slate-700 leading-relaxed">
+                            {ayahInsight.historicalContext}
+                          </p>
+                        </div>
+
+                        {/* Summary & Practical Action */}
+                        <div className="bg-purple-100/60 p-3 rounded-xl border border-purple-200 space-y-1">
+                          <p className="text-xs font-bold text-[#6B1B7E] flex items-center gap-1">
+                            <FileText className="w-3.5 h-3.5 text-[#E0107F]" />
+                            <span>Actionable Summary & Lesson for Reciter:</span>
+                          </p>
+                          <p className="text-xs text-slate-800 leading-relaxed">
+                            {ayahInsight.summary}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

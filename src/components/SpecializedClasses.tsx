@@ -101,72 +101,79 @@ export const SpecializedClasses: React.FC<SpecializedClassesProps> = ({
           </p>
         </div>
 
-        {/* 3 Specialized Tracks Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {tracks.map((track) => {
-            const Icon = track.icon;
-            return (
-              <div
-                key={track.id}
-                className={`bg-white rounded-3xl p-8 border border-purple-100 ${track.borderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden`}
-              >
-                {/* Background soft ambient tint */}
-                <div className={`absolute top-0 right-0 w-44 h-44 bg-gradient-to-br ${track.cardGradient} rounded-full blur-2xl -z-0 opacity-80`} />
+        {/* 3 Specialized Tracks: Desktop Grid + Mobile Swipeable Carousel */}
+        <div className="relative">
+          <div className="flex lg:grid lg:grid-cols-3 gap-6 overflow-x-auto lg:overflow-visible snap-x snap-mandatory no-scrollbar pb-4 pt-1 px-1">
+            {tracks.map((track, idx) => {
+              const Icon = track.icon;
+              return (
+                <div
+                  key={track.id}
+                  className={`min-w-[85vw] sm:min-w-[360px] lg:min-w-0 snap-center bg-white rounded-3xl p-6 sm:p-8 border border-purple-100 ${track.borderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden`}
+                >
+                  {/* Background soft ambient tint */}
+                  <div className={`absolute top-0 right-0 w-44 h-44 bg-gradient-to-br ${track.cardGradient} rounded-full blur-2xl -z-0 opacity-80`} />
 
-                <div className="relative z-10 space-y-6">
-                  
-                  {/* Badge & Icon */}
-                  <div className="flex items-center justify-between">
-                    <span className={`text-[11px] font-extrabold px-3 py-1 rounded-full border ${track.badgeColor}`}>
-                      {track.badge}
-                    </span>
-                    <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-700 shadow-sm group-hover:scale-110 transition-transform">
-                      <Icon className="w-6 h-6" />
+                  <div className="relative z-10 space-y-5">
+                    
+                    {/* Badge & Icon */}
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[11px] font-extrabold px-3 py-1 rounded-full border ${track.badgeColor}`}>
+                        {track.badge}
+                      </span>
+                      <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-700 shadow-sm group-hover:scale-110 transition-transform">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                    </div>
+
+                    {/* Title & Subtitle */}
+                    <div>
+                      <h3 className="text-xl sm:text-2xl font-black text-purple-950 group-hover:text-purple-700 transition-colors">
+                        {track.title}
+                      </h3>
+                      <p className="text-xs font-bold text-purple-600 mt-1">
+                        {track.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {track.description}
+                    </p>
+
+                    {/* Features List */}
+                    <div className="space-y-2 pt-2 border-t border-purple-100/80">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-purple-950 block">
+                        Program Highlights:
+                      </span>
+                      {track.features.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-2 text-xs text-slate-700">
+                          <CheckCircle2 className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+                          <span>{feat}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Title & Subtitle */}
-                  <div>
-                    <h3 className="text-2xl font-black text-purple-950 group-hover:text-purple-700 transition-colors">
-                      {track.title}
-                    </h3>
-                    <p className="text-xs font-bold text-purple-600 mt-1">
-                      {track.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {track.description}
-                  </p>
-
-                  {/* Features List */}
-                  <div className="space-y-2.5 pt-2 border-t border-purple-100/80">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-purple-950 block">
-                      Program Highlights:
-                    </span>
-                    {track.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
-                        <CheckCircle2 className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
+                  {/* CTA Button */}
+                  <div className="relative z-10 pt-6 mt-6 border-t border-purple-100">
+                    <button
+                      onClick={() => onBookTrial(track.id)}
+                      className="w-full py-3.5 px-4 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold rounded-xl text-xs transition shadow-md hover:shadow-purple-500/20 flex items-center justify-center gap-2 group/btn cursor-pointer"
+                    >
+                      <span>{track.ctaText}</span>
+                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
                   </div>
                 </div>
+              );
+            })}
+          </div>
 
-                {/* CTA Button */}
-                <div className="relative z-10 pt-8 mt-6 border-t border-purple-100">
-                  <button
-                    onClick={() => onBookTrial(track.id)}
-                    className="w-full py-3.5 px-4 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold rounded-xl text-xs transition shadow-md hover:shadow-purple-500/20 flex items-center justify-center gap-2 group/btn"
-                  >
-                    <span>{track.ctaText}</span>
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {/* Mobile Swipe Hint and Track Indicator */}
+          <div className="flex lg:hidden items-center justify-center gap-2 pt-2 text-xs text-slate-400 font-bold">
+            <span>← Swipe to explore Kids, Sisters & Adults tracks →</span>
+          </div>
         </div>
 
         {/* 3 Days Free Trial Guarantee Strip */}

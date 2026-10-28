@@ -32,6 +32,8 @@ export interface QaidaWord {
   phoneticTarget: string; // for speech matching
   level: 'beginner' | 'intermediate' | 'advanced';
   teacherVoiceUrl?: string; // custom teacher audio
+  colorCategory?: 'black' | 'red' | 'blue' | 'green'; // Authentic Madani color code
+  letterSegments?: Array<{ text: string; color: 'black' | 'red' | 'blue' | 'green' }>;
 }
 
 export interface QaidaLesson {

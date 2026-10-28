@@ -36,27 +36,77 @@ export interface NextPrayerInfo {
   currentActive: 'Fajr' | 'Sunrise' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha' | 'Tahajjud';
 }
 
-// Global timezone to city/coordinates map fallback
+// Global timezone to city/coordinates map fallback with 40+ major world locations
 const TIMEZONE_LOCATION_MAP: Record<string, { city: string; country: string; lat: number; lng: number }> = {
-  'Europe/London': { city: 'London', country: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
-  'America/New_York': { city: 'New York', country: 'United States', lat: 40.7128, lng: -74.0060 },
-  'America/Chicago': { city: 'Chicago / Dallas', country: 'United States', lat: 41.8781, lng: -87.6298 },
-  'America/Toronto': { city: 'Toronto', country: 'Canada', lat: 43.6532, lng: -79.3832 },
-  'America/Vancouver': { city: 'Vancouver', country: 'Canada', lat: 49.2827, lng: -123.1207 },
-  'America/Los_Angeles': { city: 'Los Angeles', country: 'United States', lat: 34.0522, lng: -118.2437 },
-  'Asia/Karachi': { city: 'Islamabad / Karachi', country: 'Pakistan', lat: 24.8607, lng: 67.0011 },
-  'Asia/Dubai': { city: 'Dubai', country: 'United Arab Emirates', lat: 25.2048, lng: 55.2708 },
-  'Asia/Riyadh': { city: 'Riyadh', country: 'Saudi Arabia', lat: 24.7136, lng: 46.6753 },
+  // United Kingdom & Ireland
+  'Europe/London': { city: 'London / Birmingham', country: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
+  'Europe/Dublin': { city: 'Dublin', country: 'Ireland', lat: 53.3498, lng: -6.2603 },
+
+  // United States
+  'America/New_York': { city: 'New York / Boston', country: 'United States', lat: 40.7128, lng: -74.0060 },
+  'America/Chicago': { city: 'Chicago / Dallas / Houston', country: 'United States', lat: 41.8781, lng: -87.6298 },
+  'America/Denver': { city: 'Denver / Phoenix', country: 'United States', lat: 39.7392, lng: -104.9903 },
+  'America/Los_Angeles': { city: 'Los Angeles / San Francisco', country: 'United States', lat: 34.0522, lng: -118.2437 },
+
+  // Canada
+  'America/Toronto': { city: 'Toronto / Ottawa / Montreal', country: 'Canada', lat: 43.6532, lng: -79.3832 },
+  'America/Vancouver': { city: 'Vancouver / Calgary', country: 'Canada', lat: 49.2827, lng: -123.1207 },
+  'America/Edmonton': { city: 'Edmonton', country: 'Canada', lat: 53.5461, lng: -113.4938 },
+
+  // Pakistan
+  'Asia/Karachi': { city: 'Karachi / Islamabad / Lahore', country: 'Pakistan', lat: 24.8607, lng: 67.0011 },
+
+  // Middle East & Gulf
+  'Asia/Riyadh': { city: 'Riyadh / Makkah / Madinah', country: 'Saudi Arabia', lat: 24.7136, lng: 46.6753 },
+  'Asia/Dubai': { city: 'Dubai / Abu Dhabi', country: 'United Arab Emirates', lat: 25.2048, lng: 55.2708 },
+  'Asia/Qatar': { city: 'Doha', country: 'Qatar', lat: 25.2854, lng: 51.5310 },
+  'Asia/Kuwait': { city: 'Kuwait City', country: 'Kuwait', lat: 29.3759, lng: 47.9774 },
+  'Asia/Muscat': { city: 'Muscat', country: 'Oman', lat: 23.5880, lng: 58.3829 },
+  'Asia/Bahrain': { city: 'Manama', country: 'Bahrain', lat: 26.2285, lng: 50.5860 },
+  'Asia/Amman': { city: 'Amman', country: 'Jordan', lat: 31.9454, lng: 35.9284 },
+  'Asia/Beirut': { city: 'Beirut', country: 'Lebanon', lat: 33.8938, lng: 35.5018 },
+  'Asia/Baghdad': { city: 'Baghdad', country: 'Iraq', lat: 33.3152, lng: 44.3661 },
+
+  // Europe
+  'Europe/Paris': { city: 'Paris', country: 'France', lat: 48.8566, lng: 2.3522 },
+  'Europe/Berlin': { city: 'Berlin / Frankfurt', country: 'Germany', lat: 52.5200, lng: 13.4050 },
+  'Europe/Amsterdam': { city: 'Amsterdam', country: 'Netherlands', lat: 52.3676, lng: 4.9041 },
+  'Europe/Brussels': { city: 'Brussels', country: 'Belgium', lat: 50.8503, lng: 4.3517 },
+  'Europe/Rome': { city: 'Rome / Milan', country: 'Italy', lat: 41.9028, lng: 12.4964 },
+  'Europe/Madrid': { city: 'Madrid / Barcelona', country: 'Spain', lat: 40.4168, lng: -3.7038 },
+  'Europe/Oslo': { city: 'Oslo', country: 'Norway', lat: 59.9139, lng: 10.7522 },
+  'Europe/Stockholm': { city: 'Stockholm', country: 'Sweden', lat: 59.3293, lng: 18.0686 },
+  'Europe/Copenhagen': { city: 'Copenhagen', country: 'Denmark', lat: 55.6761, lng: 12.5683 },
+  'Europe/Zurich': { city: 'Zurich / Geneva', country: 'Switzerland', lat: 47.3769, lng: 8.5417 },
+  'Europe/Vienna': { city: 'Vienna', country: 'Austria', lat: 48.2082, lng: 16.3738 },
+
+  // Turkey & Central Asia
+  'Asia/Istanbul': { city: 'Istanbul / Ankara', country: 'Turkey', lat: 41.0082, lng: 28.9784 },
+  'Asia/Baku': { city: 'Baku', country: 'Azerbaijan', lat: 40.4093, lng: 49.8671 },
+
+  // Australia & New Zealand
   'Australia/Sydney': { city: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093 },
   'Australia/Melbourne': { city: 'Melbourne', country: 'Australia', lat: -37.8136, lng: 144.9631 },
-  'Europe/Paris': { city: 'Paris', country: 'France', lat: 48.8566, lng: 2.3522 },
-  'Europe/Berlin': { city: 'Berlin', country: 'Germany', lat: 52.5200, lng: 13.4050 },
+  'Australia/Brisbane': { city: 'Brisbane', country: 'Australia', lat: -27.4698, lng: 153.0251 },
+  'Australia/Perth': { city: 'Perth', country: 'Australia', lat: -31.9505, lng: 115.8605 },
+  'Pacific/Auckland': { city: 'Auckland', country: 'New Zealand', lat: -36.8485, lng: 174.7633 },
+
+  // South & Southeast Asia
+  'Asia/Kolkata': { city: 'Delhi / Mumbai', country: 'India', lat: 28.6139, lng: 77.2090 },
+  'Asia/Dhaka': { city: 'Dhaka', country: 'Bangladesh', lat: 23.8103, lng: 90.4125 },
   'Asia/Kuala_Lumpur': { city: 'Kuala Lumpur', country: 'Malaysia', lat: 3.1390, lng: 101.6869 },
   'Asia/Singapore': { city: 'Singapore', country: 'Singapore', lat: 1.3521, lng: 103.8198 },
-  'Asia/Dhaka': { city: 'Dhaka', country: 'Bangladesh', lat: 23.8103, lng: 90.4125 },
-  'Asia/Istanbul': { city: 'Istanbul', country: 'Turkey', lat: 41.0082, lng: 28.9784 },
+  'Asia/Jakarta': { city: 'Jakarta', country: 'Indonesia', lat: -6.2088, lng: 106.8456 },
+  'Asia/Bangkok': { city: 'Bangkok', country: 'Thailand', lat: 13.7563, lng: 100.5018 },
+  'Asia/Tokyo': { city: 'Tokyo', country: 'Japan', lat: 35.6762, lng: 139.6503 },
+  'Asia/Seoul': { city: 'Seoul', country: 'South Korea', lat: 37.5665, lng: 126.9780 },
+
+  // Africa
   'Africa/Cairo': { city: 'Cairo', country: 'Egypt', lat: 30.0444, lng: 31.2357 },
-  'Asia/Kolkata': { city: 'Delhi / Mumbai', country: 'India', lat: 28.6139, lng: 77.2090 }
+  'Africa/Johannesburg': { city: 'Johannesburg / Cape Town', country: 'South Africa', lat: -26.2041, lng: 28.0473 },
+  'Africa/Casablanca': { city: 'Casablanca', country: 'Morocco', lat: 33.5731, lng: -7.5898 },
+  'Africa/Nairobi': { city: 'Nairobi', country: 'Kenya', lat: -1.2921, lng: 36.8219 },
+  'Africa/Lagos': { city: 'Lagos', country: 'Nigeria', lat: 6.5244, lng: 3.3792 }
 };
 
 // Math helpers for astronomical solar calculations
@@ -210,8 +260,18 @@ export function formatTimeAmPm(d: Date): string {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
-export function formatLiveClock(d: Date = new Date()): string {
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+export function formatLiveClock(d: Date = new Date(), timezone?: string): string {
+  try {
+    return d.toLocaleTimeString([], { 
+      timeZone: timezone, 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit', 
+      hour12: true 
+    });
+  } catch {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  }
 }
 
 export function getEstimatedHijriDate(date: Date = new Date()): string {

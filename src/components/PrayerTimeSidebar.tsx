@@ -38,19 +38,19 @@ export const PrayerTimeSidebar: React.FC<PrayerTimeSidebarProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'namaz' | 'calendar'>('namaz');
-  const [liveClock, setLiveClock] = useState(() => formatLiveClock(new Date()));
-  const [autoLoc] = useState(() => getAutoLocation());
+  const [currentLoc, setCurrentLoc] = useState(() => getAutoLocation());
+  const [liveClock, setLiveClock] = useState(() => formatLiveClock(new Date(), currentLoc.timezone));
   const [calendarMonthOffset, setCalendarMonthOffset] = useState<number>(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setLiveClock(formatLiveClock(new Date()));
+      setLiveClock(formatLiveClock(new Date(), currentLoc.timezone));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [currentLoc.timezone]);
 
   const now = new Date();
-  const prayerTimes = computePrayerTimes(now, autoLoc.lat, autoLoc.lng, true);
+  const prayerTimes = computePrayerTimes(now, currentLoc.lat, currentLoc.lng, true);
   const nextPrayer = getNextPrayer(prayerTimes, now);
   const hijriToday = getHijriDateDetails(now);
   const monthGrid = getHijriMonthGrid(now, calendarMonthOffset);
@@ -137,9 +137,9 @@ export const PrayerTimeSidebar: React.FC<PrayerTimeSidebarProps> = ({
                   <div className="flex items-center justify-between text-xs text-slate-500 font-bold">
                     <span className="flex items-center gap-1">
                       <MapPin className="w-3 h-3 text-[#E0107F]" />
-                      <span>{autoLoc.city}, {autoLoc.country}</span>
+                      <span>{currentLoc.city}, {currentLoc.country}</span>
                     </span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Live GPS / Timezone Sync" />
                   </div>
 
                   {/* Large Digital Clock */}
@@ -173,7 +173,7 @@ export const PrayerTimeSidebar: React.FC<PrayerTimeSidebarProps> = ({
                 {/* Today's 5 Daily Prayers List */}
                 <div className="space-y-1">
                   <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    Today's Schedule ({autoLoc.city})
+                    Today's Schedule ({currentLoc.city})
                   </p>
                   <div className="space-y-1">
                     {prayersList.map((prayer) => {

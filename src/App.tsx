@@ -273,13 +273,6 @@ export default function App() {
               }}
             />
 
-            {/* Courses & Training Modules */}
-            <CoursesSection
-              currency={currency}
-              onEnrollCourse={handleEnrollCourse}
-              onSubscribe={handleSubscribe}
-            />
-
             {/* Contact & Free Trial Section with UstadLeads info */}
             <ContactSection initialTrack={selectedTrackForTrial} />
           </div>
@@ -326,7 +319,7 @@ export default function App() {
           />
         )}
 
-        {currentView === 'courses' && (
+        {(currentView === 'courses' || currentView === 'pricing') && (
           <div className="space-y-0">
             <CoursesSection
               currency={currency}
@@ -465,7 +458,29 @@ export default function App() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onLogin={(user) => {
-          setCurrentUser(user);
+          // Automatically record daily student attendance
+          try {
+            const todayKey = new Date().toISOString().split('T')[0];
+            const stored = JSON.parse(localStorage.getItem('twq_student_attendance') || '{}');
+            stored[todayKey] = {
+              status: 'present',
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              studentId: user.id,
+              studentName: user.name,
+              sessionType: 'Portal Sign-in & Daily Islamic Study'
+            };
+            localStorage.setItem('twq_student_attendance', JSON.stringify(stored));
+          } catch {}
+
+          setCurrentUser({
+            ...user,
+            progress: {
+              ...user.progress,
+              streakDays: (user.progress?.streakDays || 6) + 1,
+              lastPracticeDate: new Date().toISOString()
+            }
+          });
+
           if (user.role === 'admin') {
             setCurrentView('admin');
           } else {

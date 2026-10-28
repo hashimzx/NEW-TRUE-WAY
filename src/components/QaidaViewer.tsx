@@ -191,7 +191,7 @@ export const QaidaViewer: React.FC<QaidaViewerProps> = ({
               <span>Qaida Curriculum</span>
             </h2>
             <span className="text-[10px] text-purple-800 font-bold bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
-              9 Lessons
+              {lessons.length} Lessons
             </span>
           </div>
 
@@ -316,12 +316,46 @@ export const QaidaViewer: React.FC<QaidaViewerProps> = ({
             </div>
           </div>
 
+          {/* Authentic Madani Color-Coding System Guide */}
+          <div className="bg-purple-50/70 border border-[#6B1B7E]/20 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="font-bold text-[#6B1B7E] flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#E0107F]" />
+              <span>Madani Qaida Color Guide:</span>
+            </span>
+            <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold">
+              <span className="flex items-center gap-1 text-slate-900">
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-900" />
+                <span>Black: Normal Letters</span>
+              </span>
+              <span className="flex items-center gap-1 text-red-600">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600" />
+                <span>Red: Madd & Prolongation</span>
+              </span>
+              <span className="flex items-center gap-1 text-blue-600">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                <span>Blue: Harakat & Qalqalah</span>
+              </span>
+              <span className="flex items-center gap-1 text-emerald-700">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-700" />
+                <span>Green: Ghunnah & Ikhfa</span>
+              </span>
+            </div>
+          </div>
+
           {/* Interactive Word Cards Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {filteredWords.map((word, index) => {
               const mastered = isWordMastered(word.id);
               const bookmarked = isWordBookmarked(word.id);
               const isPlaying = playingWordId === word.id;
+
+              const wordColorClass = word.colorCategory === 'red'
+                ? 'text-red-600'
+                : word.colorCategory === 'blue'
+                ? 'text-blue-600'
+                : word.colorCategory === 'green'
+                ? 'text-emerald-700'
+                : 'text-slate-900';
 
               return (
                 <div
@@ -363,9 +397,9 @@ export const QaidaViewer: React.FC<QaidaViewerProps> = ({
                     </div>
                   </div>
 
-                  {/* Large Arabic Calligraphy */}
+                  {/* Large Arabic Calligraphy with Madani Colors */}
                   <div className="my-2">
-                    <span className="font-arabic text-5xl sm:text-6xl font-bold text-purple-950 tracking-normal group-hover:text-purple-600 transition-colors drop-shadow-xs">
+                    <span className={`font-arabic text-5xl sm:text-6xl font-bold tracking-normal transition-colors drop-shadow-xs ${wordColorClass}`}>
                       {word.arabic}
                     </span>
                   </div>

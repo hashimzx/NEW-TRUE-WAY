@@ -215,60 +215,68 @@ export const VoicePracticeModal: React.FC<VoicePracticeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/70 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-xl bg-white border border-purple-100 rounded-3xl shadow-2xl overflow-hidden my-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-purple-950/70 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-md bg-white border border-purple-100 rounded-3xl shadow-2xl overflow-hidden my-4">
         
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-purple-100 bg-purple-50/60">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-purple-100 bg-purple-50/60">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 bg-purple-600 text-white rounded-xl shadow-xs">
-              <Mic className="w-4 h-4" />
+            <span className="p-1.5 bg-[#6B1B7E] text-white rounded-xl shadow-xs">
+              <Mic className="w-3.5 h-3.5" />
             </span>
             <div>
-              <h3 className="text-sm font-black text-purple-950">
+              <h3 className="text-xs font-black text-purple-950">
                 Pronunciation Assessment Studio
               </h3>
-              <p className="text-[11px] text-purple-800">
-                Passing accuracy threshold: <span className="font-extrabold text-purple-900">{passingScore}%</span>
+              <p className="text-[10px] text-purple-800">
+                Passing accuracy threshold: <span className="font-extrabold text-[#E0107F]">{passingScore}%</span>
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-800 p-1 rounded-lg hover:bg-slate-100 transition"
+            className="text-slate-400 hover:text-slate-800 p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-4 space-y-4">
 
           {/* Target Word Showcase */}
-          <div className="bg-purple-50/50 border border-purple-200/70 rounded-3xl p-6 text-center relative overflow-hidden">
-            <div className="font-arabic text-7xl font-bold text-purple-950 tracking-wide py-3 select-none drop-shadow-xs">
+          <div className="bg-purple-50/50 border border-purple-200/70 rounded-2xl p-4 text-center relative overflow-hidden">
+            <div className={`font-arabic text-4xl sm:text-5xl font-bold py-2 select-none drop-shadow-xs ${
+              word.colorCategory === 'red' 
+                ? 'text-red-600' 
+                : word.colorCategory === 'blue' 
+                ? 'text-blue-600' 
+                : word.colorCategory === 'green' 
+                ? 'text-emerald-700' 
+                : 'text-slate-900'
+            }`}>
               {word.arabic}
             </div>
 
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-xl font-black text-purple-700">
+              <span className="text-base font-black text-[#6B1B7E]">
                 {word.transliteration}
               </span>
               {word.englishMeaning && (
-                <span className="text-xs text-slate-500 italic">
+                <span className="text-[11px] text-slate-500 italic">
                   "{word.englishMeaning}"
                 </span>
               )}
             </div>
 
             {/* Makhraj Note */}
-            <div className="mt-4 pt-3 border-t border-purple-100 flex flex-col gap-1 text-xs text-slate-700">
-              <div className="flex items-start justify-center gap-1.5">
-                <span className="text-purple-700 font-bold">Makhraj Point:</span>
+            <div className="mt-2.5 pt-2 border-t border-purple-100 flex flex-col gap-0.5 text-[11px] text-slate-700">
+              <div className="flex items-start justify-center gap-1">
+                <span className="text-[#6B1B7E] font-bold">Makhraj:</span>
                 <span>{word.makhraj}</span>
               </div>
               {word.tajweedRule && (
-                <div className="text-[11px] text-purple-900 font-medium">
+                <div className="text-[10px] text-[#5B2A9A] font-semibold">
                   • {word.tajweedRule}
                 </div>
               )}

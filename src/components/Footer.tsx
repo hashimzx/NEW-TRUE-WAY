@@ -194,7 +194,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenEnroll }) => {
 
               <div className="flex items-start gap-2">
                 <CreditCard className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
-                <span className="text-purple-300 text-[11px]">HBL, Allied Bank & Easypaisa (03497778998)</span>
+                <span className="text-purple-300 text-[11px]">Visa, Mastercard, AMEX & Global Debit Cards</span>
               </div>
             </div>
 
@@ -242,15 +242,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenEnroll }) => {
 
         </div>
 
-        {/* Bottom Copyright & Nexsolutions credit */}
+        {/* Bottom Copyright & Powered by Truth way growth */}
         <div className="border-t border-purple-900/40 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-purple-400 gap-4">
           <p>
-            &copy; {new Date().getFullYear()} True Way Quran & UstadLeads. All rights reserved. Lead Mentor: Abdul Basit Saleem.
+            &copy; {new Date().getFullYear()} True Way Quran (www.truewayquran.com). All rights reserved.
           </p>
 
           <div className="flex items-center gap-4">
-            <span className="text-purple-300">
-              Powered by <a href="https://nexsolutions.org" target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:underline font-bold">Nexsolutions</a>
+            <span className="text-purple-300 font-semibold">
+              Powered by <span className="bg-gradient-to-r from-pink-400 to-purple-300 bg-clip-text text-transparent font-black">Truth way growth</span>
             </span>
             <span>·</span>
             <button onClick={() => onNavigate('contact')} className="hover:text-white transition cursor-pointer">

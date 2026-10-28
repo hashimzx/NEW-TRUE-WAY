@@ -32,7 +32,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenEnroll, onOpenWhat
     },
     {
       q: 'What payment methods do you accept?',
-      a: 'We accept direct bank transfers (HBL, Allied Bank Limited), mobile wallets (Easypaisa 03497778998, JazzCash), as well as international debit/credit cards, Wise, and PayPal for overseas students.'
+      a: 'We accept all major international Credit and Debit Cards (Visa, Mastercard, American Express), digital wallets, and instant 256-bit SSL encrypted checkout for students worldwide.'
     }
   ];
 
